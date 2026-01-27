@@ -1,27 +1,37 @@
-import { useAuth } from "../../auth/AuthContext";
+import { AppLayout } from "../../layouts/AppLayout";
 
 export function HomePage() {
-  const { user, logout } = useAuth();
-
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-4xl rounded-2xl border bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold">MAINTENIX</h1>
-            <p className="mt-1 text-sm opacity-70">
-              Signed in as {user?.name ?? "Unknown"} ({user?.email ?? ""})
-            </p>
+    <AppLayout title="Home">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900">Overview</h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Next screens: Machines, Maintenance Records, Photo gallery, History.
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="text-xs font-semibold uppercase text-slate-500">
+              Machines
+            </div>
+            <div className="mt-2 text-2xl font-semibold">0</div>
           </div>
 
-          <button
-            onClick={logout}
-            className="rounded-lg border px-4 py-2 hover:bg-black/5"
-          >
-            Sign out
-          </button>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="text-xs font-semibold uppercase text-slate-500">
+              Pending records
+            </div>
+            <div className="mt-2 text-2xl font-semibold">0</div>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="text-xs font-semibold uppercase text-slate-500">
+              Done records
+            </div>
+            <div className="mt-2 text-2xl font-semibold">0</div>
+          </div>
         </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }
