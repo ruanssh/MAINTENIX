@@ -1,14 +1,135 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
+}
+
+model machines {
+  id                  BigInt                @id @default(autoincrement()) @db.UnsignedBigInt
+  name                String                @db.VarChar(150)
+  line                String?               @db.VarChar(100)
+  location            String?               @db.VarChar(100)
+  model               String?               @db.VarChar(100)
+  serial_number       String?               @db.VarChar(100)
+  photo_url           String?               @db.VarChar(255)
+  created_by          BigInt                @db.UnsignedBigInt
+  created_at          DateTime              @default(now()) @db.Timestamp(0)
+  updated_at          DateTime              @default(now()) @db.Timestamp(0)
+  users               users                 @relation(fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_machines_created_by")
+  maintenance_events  maintenance_events[]
+  maintenance_records maintenance_records[]
+
+  @@index([created_by], map: "fk_machines_created_by")
+}
+
+model maintenance_events {
+  id                    BigInt                          @id @default(autoincrement()) @db.UnsignedBigInt
+  maintenance_record_id BigInt                          @db.UnsignedBigInt
+  machine_id            BigInt                          @db.UnsignedBigInt
+  component_name        String                          @db.VarChar(150)
+  event_type            maintenance_events_event_type
+  event_date            DateTime                        @db.Date
+  used_part_description String?                         @db.VarChar(255)
+  quantity              Decimal?                        @default(1.00) @db.Decimal(10, 2)
+  removed_condition     String?                         @db.VarChar(150)
+  destination           maintenance_events_destination?
+  observation           String?                         @db.Text
+  photo_url             String?                         @db.VarChar(255)
+  created_by            BigInt                          @db.UnsignedBigInt
+  created_at            DateTime                        @default(now()) @db.Timestamp(0)
+  users                 users                           @relation(fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_me_created_by")
+  machines              machines                        @relation(fields: [machine_id], references: [id], onUpdate: Restrict, map: "fk_me_machine")
+  maintenance_records   maintenance_records             @relation(fields: [maintenance_record_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_me_record")
+
+  @@index([created_by], map: "fk_me_created_by")
+  @@index([maintenance_record_id], map: "fk_me_record")
+  @@index([component_name], map: "idx_me_component")
+  @@index([event_date], map: "idx_me_event_date")
+  @@index([machine_id], map: "idx_me_machine")
+}
+
+model maintenance_photos {
+  id                    BigInt                  @id @default(autoincrement()) @db.UnsignedBigInt
+  maintenance_record_id BigInt                  @db.UnsignedBigInt
+  type                  maintenance_photos_type
+  file_url              String                  @db.VarChar(255)
+  created_by            BigInt                  @db.UnsignedBigInt
+  created_at            DateTime                @default(now()) @db.Timestamp(0)
+  users                 users                   @relation(fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_mp_created_by")
+  maintenance_records   maintenance_records     @relation(fields: [maintenance_record_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_mp_record")
+
+  @@index([created_by], map: "fk_mp_created_by")
+  @@index([maintenance_record_id], map: "fk_mp_record")
+}
+
+model maintenance_records {
+  id                                           BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
+  machine_id                                   BigInt                       @db.UnsignedBigInt
+  created_by                                   BigInt                       @db.UnsignedBigInt
+  finished_by                                  BigInt?                      @db.UnsignedBigInt
+  status                                       maintenance_records_status   @default(PENDING)
+  priority                                     maintenance_records_priority @default(MEDIUM)
+  problem_description                          String                       @db.Text
+  solution_description                         String?                      @db.Text
+  started_at                                   DateTime?                    @db.DateTime(0)
+  finished_at                                  DateTime?                    @db.DateTime(0)
+  created_at                                   DateTime                     @default(now()) @db.Timestamp(0)
+  updated_at                                   DateTime                     @default(now()) @db.Timestamp(0)
+  maintenance_events                           maintenance_events[]
+  maintenance_photos                           maintenance_photos[]
+  users_maintenance_records_created_byTousers  users                        @relation("maintenance_records_created_byTousers", fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_mr_created_by")
+  users_maintenance_records_finished_byTousers users?                       @relation("maintenance_records_finished_byTousers", fields: [finished_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_mr_finished_by")
+  machines                                     machines                     @relation(fields: [machine_id], references: [id], onUpdate: Restrict, map: "fk_mr_machine")
+
+  @@index([created_by], map: "fk_mr_created_by")
+  @@index([finished_by], map: "fk_mr_finished_by")
+  @@index([machine_id], map: "idx_mr_machine")
+  @@index([status], map: "idx_mr_status")
+}
+
+model users {
+  id                                                         BigInt                @id @default(autoincrement()) @db.UnsignedBigInt
+  name                                                       String                @db.VarChar(150)
+  email                                                      String                @unique(map: "email") @db.VarChar(150)
+  password_hash                                              String                @db.VarChar(255)
+  active                                                     Boolean               @default(true)
+  created_at                                                 DateTime              @default(now()) @db.Timestamp(0)
+  updated_at                                                 DateTime              @default(now()) @db.Timestamp(0)
+  machines                                                   machines[]
+  maintenance_events                                         maintenance_events[]
+  maintenance_photos                                         maintenance_photos[]
+  maintenance_records_maintenance_records_created_byTousers  maintenance_records[] @relation("maintenance_records_created_byTousers")
+  maintenance_records_maintenance_records_finished_byTousers maintenance_records[] @relation("maintenance_records_finished_byTousers")
+}
+
+enum maintenance_photos_type {
+  BEFORE
+  AFTER
+}
+
+enum maintenance_events_event_type {
+  REPLACEMENT
+  INSPECTION
+  ADJUSTMENT
+}
+
+enum maintenance_records_status {
+  PENDING
+  DONE
+}
+
+enum maintenance_records_priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum maintenance_events_destination {
+  REPAIR
+  SCRAP
+  ANALYSIS
+  STORAGE
+  RETURN
 }
