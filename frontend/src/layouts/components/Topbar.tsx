@@ -1,4 +1,5 @@
 import { useAuth } from "../../auth/AuthContext";
+import maintenixLogo from "../../assets/maintenix.svg";
 
 type Props = {
   title?: string;
@@ -11,8 +12,8 @@ export function Topbar({ title }: Props) {
     <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
       <div className="flex h-14 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3">
-          <div className="md:hidden text-lg font-semibold tracking-tight">
-            MAINTENIX
+          <div className="md:hidden">
+            <img src={maintenixLogo} alt="MAINTENIX" className="h-16 w-auto" />
           </div>
 
           {title ? (

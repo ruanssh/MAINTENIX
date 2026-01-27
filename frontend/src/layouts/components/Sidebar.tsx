@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import maintenixLogo from "../../assets/maintenix.svg";
 
 function linkClassName({ isActive }: { isActive: boolean }) {
   return [
@@ -10,9 +11,12 @@ function linkClassName({ isActive }: { isActive: boolean }) {
 export function Sidebar() {
   return (
     <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
-      <div className="px-4 py-4 border-b border-slate-200">
-        <div className="text-lg font-semibold tracking-tight">MAINTENIX</div>
-        <div className="text-xs text-slate-500">MVP</div>
+      <div className="h-14 px-4 border-b border-slate-200 flex items-center">
+        <img
+          src={maintenixLogo}
+          alt="MAINTENIX"
+          className="h-16 w-auto block translate-y-[1px]"
+        />
       </div>
 
       <nav className="flex-1 p-3">

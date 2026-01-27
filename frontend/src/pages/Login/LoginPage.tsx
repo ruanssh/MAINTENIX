@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-
+import maintenixLogo from "../../assets/maintenix.svg";
 import { useAuth } from "../../auth/AuthContext";
 import { parseApiError } from "../../api/errors";
 import { loginSchema, type LoginFormValues } from "../../schemas/auth.schema";
@@ -38,9 +38,12 @@ export function LoginPage() {
   return (
     <div className="min-h-screen w-full bg-slate-50 text-slate-900 grid place-items-center p-4">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight">MAINTENIX</h1>
-          <p className="mt-1 text-sm text-slate-600">Sign in to continue</p>
+        <div className="mb-6 flex h-12 items-center justify-center">
+          <img
+            src={maintenixLogo}
+            alt="MAINTENIX"
+            className="h-8 w-auto translate-y-[1px]"
+          />
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
