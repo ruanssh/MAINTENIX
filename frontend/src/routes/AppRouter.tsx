@@ -5,6 +5,9 @@ import { CreateUserPage } from "../pages/Users/CreateUserPage";
 import { MachinesListPage } from "../pages/Machines/MachinesListPage";
 import { CreateMachinePage } from "../pages/Machines/CreateMachinePage";
 import { EditMachinePage } from "../pages/Machines/EditMachinePage";
+import { MachineRecordsListPage } from "../pages/MaintenanceRecords/MachineRecordsListPage";
+import { CreateMaintenanceRecordPage } from "../pages/MaintenanceRecords/CreateMaintenanceRecordPage";
+import { FinishMaintenanceRecordPage } from "../pages/MaintenanceRecords/FinishMaintenanceRecordPage";
 import { ProtectedRoute } from "../auth/ProtectedRoute";
 
 export function AppRouter() {
@@ -44,6 +47,33 @@ export function AppRouter() {
         element={
           <ProtectedRoute>
             <EditMachinePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/machines/:id/maintenance-records"
+        element={
+          <ProtectedRoute>
+            <MachineRecordsListPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/machines/:id/maintenance-records/new"
+        element={
+          <ProtectedRoute>
+            <CreateMaintenanceRecordPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/machines/:id/maintenance-records/:recordId"
+        element={
+          <ProtectedRoute>
+            <FinishMaintenanceRecordPage />
           </ProtectedRoute>
         }
       />
