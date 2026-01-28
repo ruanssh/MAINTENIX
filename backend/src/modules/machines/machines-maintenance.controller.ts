@@ -8,15 +8,26 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+type UploadedFile = {
+  originalname: string;
+  mimetype: string;
+  buffer: Buffer;
+  size: number;
+};
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MachinesMaintenanceService } from './machines-maintenance.service';
 import { CreateMaintenanceRecordDto } from './dto/create-maintenance-record.dto';
 import { FinishMaintenanceRecordDto } from './dto/finish-maintenance-record.dto';
 import { ListMaintenanceRecordsQueryDto } from './dto/list-maintenance-records.dto';
 import { CreateMaintenanceEventDto } from './dto/create-maintenance-event.dto';
+import { CreateMaintenancePhotoDto } from './dto/create-maintenance-photo.dto';
 
 @ApiTags('machines')
 @ApiBearerAuth('jwt')
@@ -86,6 +97,35 @@ export class MachinesMaintenanceController {
       this.parseId(machineId),
       this.parseId(recordId),
       dto,
+      createdBy,
+    );
+  }
+
+  @Post(':recordId/photos')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  createPhoto(
+    @Req() req: any,
+    @Param('machineId') machineId: string,
+    @Param('recordId') recordId: string,
+    @Body() dto: CreateMaintenancePhotoDto,
+    @UploadedFile() file?: UploadedFile,
+  ) {
+    if (!file) throw new BadRequestException('Arquivo não enviado');
+    if (!file.mimetype?.startsWith('image/')) {
+      throw new BadRequestException('Arquivo inválido');
+    }
+
+    const createdBy = this.parseId(req.user.sub);
+    return this.maintenance.createPhoto(
+      this.parseId(machineId),
+      this.parseId(recordId),
+      dto,
+      file,
       createdBy,
     );
   }

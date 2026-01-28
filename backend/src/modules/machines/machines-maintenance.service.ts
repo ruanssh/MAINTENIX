@@ -14,10 +14,24 @@ import {
   MaintenanceEventType,
 } from './dto/create-maintenance-event.dto';
 import { ListMaintenanceRecordsQueryDto } from './dto/list-maintenance-records.dto';
+import {
+  CreateMaintenancePhotoDto,
+  MaintenancePhotoType,
+} from './dto/create-maintenance-photo.dto';
+import { MinioService } from '../../storage/minio.service';
+type UploadedFile = {
+  originalname: string;
+  mimetype: string;
+  buffer: Buffer;
+  size: number;
+};
 
 @Injectable()
 export class MachinesMaintenanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storage: MinioService,
+  ) {}
 
   async createRecord(
     machineId: bigint,
@@ -122,6 +136,43 @@ export class MachinesMaintenanceService {
       where: { machine_id: machineId, maintenance_record_id: recordId },
       orderBy: [{ event_date: 'desc' }, { created_at: 'desc' }],
       select: this.eventSelect(),
+    });
+  }
+
+  async createPhoto(
+    machineId: bigint,
+    recordId: bigint,
+    dto: CreateMaintenancePhotoDto,
+    file: UploadedFile,
+    createdBy: bigint,
+  ) {
+    await this.ensureRecord(machineId, recordId);
+
+    const safeName = file.originalname.replace(/[^\w.-]/g, '_');
+    const folder = dto.type === MaintenancePhotoType.BEFORE ? 'before' : 'after';
+    const objectName = `maintenance-records/${recordId}/${folder}/${Date.now()}-${safeName}`;
+
+    const fileUrl = await this.storage.upload({
+      objectName,
+      buffer: file.buffer,
+      contentType: file.mimetype,
+    });
+
+    return this.prisma.maintenance_photos.create({
+      data: {
+        maintenance_record_id: recordId,
+        type: dto.type,
+        file_url: fileUrl,
+        created_by: createdBy,
+      },
+      select: {
+        id: true,
+        maintenance_record_id: true,
+        type: true,
+        file_url: true,
+        created_by: true,
+        created_at: true,
+      },
     });
   }
 

@@ -3,3 +3,4 @@
 .crush/
 AGENTS.md
 /generated/prisma
+minio/
