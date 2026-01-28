@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { FiArrowLeft } from "react-icons/fi";
 
 import { AppLayout } from "../../layouts/AppLayout";
+import { ImageUpload } from "../../components/ImageUpload";
 import { MachinesService } from "../../services/machines.service";
 import { MaintenanceRecordsService } from "../../services/maintenance-records.service";
 import { parseApiError } from "../../api/errors";
@@ -37,6 +38,7 @@ export function CreateMaintenanceRecordPage() {
   const navigate = useNavigate();
   const [machine, setMachine] = useState<Machine | null>(null);
   const [loading, setLoading] = useState(true);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   const defaultValues = useMemo<CreateMaintenanceRecordFormValues>(
     () => ({
@@ -76,8 +78,25 @@ export function CreateMaintenanceRecordPage() {
 
   async function onSubmit(values: CreateMaintenanceRecordFormValues) {
     if (!id) return;
+    if (!photoFile) {
+      toast.error("Envie a foto da pendência.");
+      return;
+    }
     try {
-      await MaintenanceRecordsService.create(id, normalizePayload(values));
+      const record = await MaintenanceRecordsService.create(
+        id,
+        normalizePayload(values),
+      );
+      const photo = await MaintenanceRecordsService.uploadPhoto(
+        id,
+        record.id,
+        "BEFORE",
+        photoFile,
+      );
+      sessionStorage.setItem(
+        `maintenance-photo-before:${record.id}`,
+        photo.file_url,
+      );
       toast.success("Pendência criada.");
       navigate(`/machines/${id}/maintenance-records`, { replace: true });
     } catch (e) {
@@ -153,6 +172,14 @@ export function CreateMaintenanceRecordPage() {
               />
             </div>
           </div>
+
+          <ImageUpload
+            label="Foto do problema"
+            hint="Obrigatório"
+            required
+            value={photoFile}
+            onChange={setPhotoFile}
+          />
 
           <div className="flex items-center justify-end gap-2">
             <button
