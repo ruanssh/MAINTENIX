@@ -1,3 +1,5 @@
 .context/
 .env
+.crush/
+AGENTS.md
 /generated/prisma
