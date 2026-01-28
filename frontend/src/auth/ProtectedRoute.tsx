@@ -7,7 +7,7 @@ export function ProtectedRoute({ children }: { children: JSX.Element }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen grid place-items-center">Loading...</div>
+      <div className="min-h-screen grid place-items-center">Carregando...</div>
     );
   }
 

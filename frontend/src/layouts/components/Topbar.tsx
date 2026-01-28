@@ -21,11 +21,11 @@ export function Topbar({ title }: Props) {
               <div className="text-sm font-semibold text-slate-900">
                 {title}
               </div>
-              <div className="text-xs text-slate-500">Dashboard</div>
+              <div className="text-xs text-slate-500">Painel</div>
             </div>
           ) : (
             <div className="hidden md:block text-sm text-slate-500">
-              Welcome back
+              Bem-vindo de volta
             </div>
           )}
         </div>
@@ -33,7 +33,7 @@ export function Topbar({ title }: Props) {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex flex-col items-end leading-tight">
             <span className="text-sm font-medium text-slate-900">
-              {user?.name ?? "User"}
+              {user?.name ?? "Usuário"}
             </span>
             <span className="text-xs text-slate-500">{user?.email ?? ""}</span>
           </div>
@@ -42,7 +42,7 @@ export function Topbar({ title }: Props) {
             onClick={logout}
             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50"
           >
-            Sign out
+            Sair
           </button>
         </div>
       </div>

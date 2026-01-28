@@ -48,10 +48,10 @@ export function LoginPage() {
 
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label className="text-sm font-medium text-slate-800">Email</label>
+            <label className="text-sm font-medium text-slate-800">E-mail</label>
             <input
               className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
-              placeholder="you@company.com"
+              placeholder="voce@empresa.com"
               autoComplete="email"
               {...register("email")}
             />
@@ -64,7 +64,7 @@ export function LoginPage() {
 
           <div>
             <label className="text-sm font-medium text-slate-800">
-              Password
+              Senha
             </label>
             <input
               type="password"
@@ -85,7 +85,7 @@ export function LoginPage() {
             disabled={isSubmitting}
             className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-900 hover:bg-slate-50 disabled:opacity-60"
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
         </form>
       </div>

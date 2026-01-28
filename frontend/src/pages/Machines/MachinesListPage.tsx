@@ -24,12 +24,12 @@ export function MachinesListPage() {
   }
 
   async function handleDelete(machine: Machine) {
-    const ok = window.confirm(`Delete machine "${machine.name}"?`);
+    const ok = window.confirm(`Excluir máquina "${machine.name}"?`);
     if (!ok) return;
 
     try {
       await MachinesService.remove(machine.id);
-      toast.success("Machine deleted.");
+      toast.success("Máquina excluída.");
       await loadMachines();
     } catch (e) {
       toast.error(parseApiError(e));
@@ -41,13 +41,13 @@ export function MachinesListPage() {
   }, []);
 
   return (
-    <AppLayout title="Machines">
+    <AppLayout title="Máquinas">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">Machines</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Máquinas</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Manage your machines catalog.
+              Gerencie o cadastro de máquinas.
             </p>
           </div>
 
@@ -55,7 +55,7 @@ export function MachinesListPage() {
             to="/machines/new"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50"
           >
-            New machine
+            Nova máquina
           </Link>
         </div>
 
@@ -63,19 +63,19 @@ export function MachinesListPage() {
           <table className="w-full border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                <th className="py-2">Name</th>
-                <th className="py-2">Line</th>
-                <th className="py-2">Location</th>
-                <th className="py-2">Model</th>
+                <th className="py-2">Nome</th>
+                <th className="py-2">Linha</th>
+                <th className="py-2">Local</th>
+                <th className="py-2">Modelo</th>
                 <th className="py-2">Serial</th>
-                <th className="py-2 text-right">Actions</th>
+                <th className="py-2 text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
               {loading && (
                 <tr>
                   <td colSpan={6} className="py-6 text-center text-slate-500">
-                    Loading machines...
+                    Carregando máquinas...
                   </td>
                 </tr>
               )}
@@ -83,7 +83,7 @@ export function MachinesListPage() {
               {!loading && machines.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-6 text-center text-slate-500">
-                    No machines yet.
+                    Nenhuma máquina cadastrada.
                   </td>
                 </tr>
               )}
@@ -115,14 +115,14 @@ export function MachinesListPage() {
                           to={`/machines/${machine.id}/edit`}
                           className="rounded-md border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                         >
-                          Edit
+                          Editar
                         </Link>
                         <button
                           type="button"
                           onClick={() => handleDelete(machine)}
                           className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
                         >
-                          Delete
+                          Excluir
                         </button>
                       </div>
                     </td>

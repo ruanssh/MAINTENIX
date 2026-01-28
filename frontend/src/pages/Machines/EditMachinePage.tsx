@@ -92,7 +92,7 @@ export function EditMachinePage() {
     if (!id) return;
     try {
       await MachinesService.update(id, normalizePayload(values));
-      toast.success("Machine updated.");
+      toast.success("Máquina atualizada.");
       navigate("/machines", { replace: true });
     } catch (e) {
       toast.error(parseApiError(e));
@@ -100,21 +100,21 @@ export function EditMachinePage() {
   }
 
   return (
-    <AppLayout title="Edit machine">
+    <AppLayout title="Editar máquina">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6">
-          <h1 className="text-xl font-semibold tracking-tight">Edit machine</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Editar máquina</h1>
           <p className="mt-1 text-sm text-slate-600">
-            {machine ? machine.name : "Loading machine..."}
+            {machine ? machine.name : "Carregando máquina..."}
           </p>
         </div>
 
         {loading ? (
-          <div className="text-sm text-slate-500">Loading...</div>
+          <div className="text-sm text-slate-500">Carregando...</div>
         ) : (
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label className="text-sm font-medium text-slate-800">Name</label>
+              <label className="text-sm font-medium text-slate-800">Nome</label>
               <input
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                 placeholder="Extrusora DS"
@@ -129,7 +129,9 @@ export function EditMachinePage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="text-sm font-medium text-slate-800">Line</label>
+                <label className="text-sm font-medium text-slate-800">
+                  Linha
+                </label>
                 <input
                   className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                   placeholder="Linha 3"
@@ -137,9 +139,7 @@ export function EditMachinePage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-800">
-                  Location
-                </label>
+                <label className="text-sm font-medium text-slate-800">Local</label>
                 <input
                   className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                   placeholder="Setor B"
@@ -150,7 +150,9 @@ export function EditMachinePage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="text-sm font-medium text-slate-800">Model</label>
+                <label className="text-sm font-medium text-slate-800">
+                  Modelo
+                </label>
                 <input
                   className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                   placeholder="DS-3000"
@@ -159,7 +161,7 @@ export function EditMachinePage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-slate-800">
-                  Serial number
+                  Número de série
                 </label>
                 <input
                   className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
@@ -170,7 +172,9 @@ export function EditMachinePage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-800">Photo URL</label>
+              <label className="text-sm font-medium text-slate-800">
+                URL da foto
+              </label>
               <input
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                 placeholder="https://cdn.exemplo.com/machines/1.jpg"
@@ -184,14 +188,14 @@ export function EditMachinePage() {
                 onClick={() => navigate("/machines")}
                 className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 disabled:opacity-60"
               >
-                {isSubmitting ? "Saving..." : "Save changes"}
+                {isSubmitting ? "Salvando..." : "Salvar alterações"}
               </button>
             </div>
           </form>

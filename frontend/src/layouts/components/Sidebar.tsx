@@ -25,11 +25,11 @@ export function Sidebar() {
         </div>
 
         <NavLink to="/" className={linkClassName} end>
-          Home
+          Início
         </NavLink>
 
         <NavLink to="/machines" className={linkClassName}>
-          Machines
+          Máquinas
         </NavLink>
       </nav>
 
