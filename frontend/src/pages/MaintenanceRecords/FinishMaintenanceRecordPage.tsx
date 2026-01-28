@@ -20,6 +20,39 @@ import type {
   MaintenanceRecord,
 } from "../../types/maintenance-records";
 
+function ImagePreviewCard({
+  title,
+  imageUrl,
+  onPreview,
+}: {
+  title: string;
+  imageUrl: string | null;
+  onPreview: (url: string) => void;
+}) {
+  return (
+    <div>
+      <div className="text-xs font-semibold uppercase text-slate-500">
+        {title}
+      </div>
+      <button
+        type="button"
+        onClick={() => imageUrl && onPreview(imageUrl)}
+        className="mt-2 flex h-56 w-56 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-500 transition hover:border-slate-300"
+      >
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={title}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          "Sem imagem"
+        )}
+      </button>
+    </div>
+  );
+}
+
 function formatDateTime(value?: string | null) {
   if (!value) return "-";
   const date = new Date(value);
@@ -59,6 +92,7 @@ export function FinishMaintenanceRecordPage() {
   const [beforePhotoUrl, setBeforePhotoUrl] = useState<string | null>(null);
   const [afterPhotoFile, setAfterPhotoFile] = useState<File | null>(null);
   const [afterPhotoUrl, setAfterPhotoUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const defaultValues = useMemo<FinishMaintenanceRecordFormValues>(
     () => ({
@@ -119,7 +153,11 @@ export function FinishMaintenanceRecordPage() {
       return;
     }
     try {
-      await MaintenanceRecordsService.finish(id, recordId, normalizePayload(values));
+      await MaintenanceRecordsService.finish(
+        id,
+        recordId,
+        normalizePayload(values),
+      );
       const photo = await MaintenanceRecordsService.uploadPhoto(
         id,
         recordId,
@@ -170,12 +208,10 @@ export function FinishMaintenanceRecordPage() {
                 Pendência
               </h2>
               <div className="mt-4">
-                <ImageUpload
-                  label="Foto do problema"
-                  value={null}
-                  previewUrl={beforePhotoUrl}
-                  onChange={() => undefined}
-                  disabled
+                <ImagePreviewCard
+                  title="Foto do problema"
+                  imageUrl={beforePhotoUrl}
+                  onPreview={setPreviewUrl}
                 />
               </div>
               <div className="mt-4 space-y-3 text-sm text-slate-700">
@@ -216,12 +252,6 @@ export function FinishMaintenanceRecordPage() {
                     </span>
                     <p className="mt-1">{formatDateTime(record.created_at)}</p>
                   </div>
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Início
-                    </span>
-                    <p className="mt-1">{formatDateTime(record.started_at)}</p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -234,28 +264,17 @@ export function FinishMaintenanceRecordPage() {
                   : "bg-white",
               ].join(" ")}
             >
-              <h2 className="text-sm font-semibold text-slate-800">Resolução</h2>
+              <h2 className="text-sm font-semibold text-slate-800">
+                Resolução
+              </h2>
 
               {record.status === "DONE" ? (
                 <div className="mt-4 space-y-4 text-sm text-slate-700">
-                  <div>
-                    <div className="text-xs font-semibold uppercase text-slate-500">
-                      Foto da resolução
-                    </div>
-                    <div className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white">
-                      <div className="flex h-48 w-full items-center justify-center bg-slate-50">
-                        {afterPhotoUrl ? (
-                          <img
-                            src={afterPhotoUrl}
-                            alt="Foto da resolução"
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="text-sm text-slate-500">Sem imagem</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <ImagePreviewCard
+                    title="Foto da resolução"
+                    imageUrl={afterPhotoUrl}
+                    onPreview={setPreviewUrl}
+                  />
 
                   <div>
                     <span className="text-xs font-semibold uppercase text-slate-500">
@@ -285,7 +304,10 @@ export function FinishMaintenanceRecordPage() {
                       onChange={setAfterPhotoFile}
                     />
                   </div>
-                  <form className="mt-4 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+                  <form
+                    className="mt-4 space-y-4"
+                    onSubmit={handleSubmit(onSubmit)}
+                  >
                     <div>
                       <label className="text-sm font-medium text-slate-800">
                         Descrição da solução
@@ -330,6 +352,26 @@ export function FinishMaintenanceRecordPage() {
           </div>
         )}
       </div>
+
+      {previewUrl && (
+        <div className="fixed inset-0 z-50">
+          <button
+            type="button"
+            aria-label="Fechar preview"
+            onClick={() => setPreviewUrl(null)}
+            className="absolute inset-0 bg-black/70"
+          />
+          <div className="absolute inset-0 flex items-center justify-center p-6">
+            <div className="max-h-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-black">
+              <img
+                src={previewUrl}
+                alt="Pré-visualização"
+                className="max-h-[80vh] w-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }
