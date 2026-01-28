@@ -335,8 +335,14 @@ export function FinishMaintenanceRecordPage() {
             onClick={() => setPreviewUrl(null)}
             className="absolute inset-0 bg-black/70"
           />
-          <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="max-h-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-black">
+          <div
+            className="absolute inset-0 flex items-center justify-center p-6"
+            onClick={() => setPreviewUrl(null)}
+          >
+            <div
+              className="max-h-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-black"
+              onClick={(event) => event.stopPropagation()}
+            >
               <img
                 src={previewUrl}
                 alt="Pré-visualização"
