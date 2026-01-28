@@ -26,10 +26,6 @@ function normalizePayload(
 
   if (values.priority) payload.priority = values.priority;
 
-  if (values.started_at?.trim()) {
-    payload.started_at = new Date(values.started_at).toISOString();
-  }
-
   return payload;
 }
 
@@ -44,7 +40,6 @@ export function CreateMaintenanceRecordPage() {
     () => ({
       problem_description: "",
       priority: "MEDIUM",
-      started_at: "",
     }),
     [],
   );
@@ -160,16 +155,6 @@ export function CreateMaintenanceRecordPage() {
                 <option value="MEDIUM">Média</option>
                 <option value="LOW">Baixa</option>
               </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-800">
-                Início (opcional)
-              </label>
-              <input
-                type="datetime-local"
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-                {...register("started_at")}
-              />
             </div>
           </div>
 

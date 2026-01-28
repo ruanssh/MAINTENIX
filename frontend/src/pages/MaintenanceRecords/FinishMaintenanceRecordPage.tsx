@@ -60,25 +60,12 @@ function formatDateTime(value?: string | null) {
   return date.toLocaleString("pt-BR");
 }
 
-function formatInputDateTime(value?: string | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const offset = date.getTimezoneOffset();
-  const local = new Date(date.getTime() - offset * 60_000);
-  return local.toISOString().slice(0, 16);
-}
-
 function normalizePayload(
   values: FinishMaintenanceRecordFormValues,
 ): FinishMaintenanceRecordRequest {
   const payload: FinishMaintenanceRecordRequest = {
     solution_description: values.solution_description.trim(),
   };
-
-  if (values.finished_at?.trim()) {
-    payload.finished_at = new Date(values.finished_at).toISOString();
-  }
 
   return payload;
 }
@@ -97,7 +84,6 @@ export function FinishMaintenanceRecordPage() {
   const defaultValues = useMemo<FinishMaintenanceRecordFormValues>(
     () => ({
       solution_description: "",
-      finished_at: "",
     }),
     [],
   );
@@ -133,7 +119,6 @@ export function FinishMaintenanceRecordPage() {
         if (afterStored) setAfterPhotoUrl(afterStored);
         reset({
           solution_description: recordData.solution_description ?? "",
-          finished_at: formatInputDateTime(recordData.finished_at),
         });
       } catch (e) {
         toast.error(parseApiError(e));
@@ -323,17 +308,6 @@ export function FinishMaintenanceRecordPage() {
                           {errors.solution_description.message}
                         </p>
                       )}
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-slate-800">
-                        Finalizado em (opcional)
-                      </label>
-                      <input
-                        type="datetime-local"
-                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
-                        {...register("finished_at")}
-                      />
                     </div>
 
                     <div className="flex items-center justify-end gap-2">
