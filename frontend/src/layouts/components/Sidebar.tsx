@@ -27,6 +27,10 @@ export function Sidebar() {
         <NavLink to="/" className={linkClassName} end>
           Home
         </NavLink>
+
+        <NavLink to="/machines" className={linkClassName}>
+          Machines
+        </NavLink>
       </nav>
 
       <div className="border-t border-slate-200 p-3 text-xs text-slate-500">
