@@ -77,6 +77,8 @@ model maintenance_records {
   finished_at                                  DateTime?                    @db.DateTime(0)
   created_at                                   DateTime                     @default(now()) @db.Timestamp(0)
   updated_at                                   DateTime                     @default(now()) @db.Timestamp(0)
+  category                                     maintenance_records_category @default(MECANICA)
+  shift                                        maintenance_records_shift    @default(PRIMEIRO)
   maintenance_events                           maintenance_events[]
   maintenance_photos                           maintenance_photos[]
   users_maintenance_records_created_byTousers  users                        @relation("maintenance_records_created_byTousers", fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_mr_created_by")
@@ -132,4 +134,24 @@ enum maintenance_events_destination {
   ANALYSIS
   STORAGE
   RETURN
+}
+
+enum maintenance_records_category {
+  ELETRICA
+  MECANICA
+  PNEUMATICA
+  PROCESSO
+  ELETRONICA
+  AUTOMACAO
+  PREDIAL
+  FERRAMENTARIA
+  REFRIGERACAO
+  SETUP
+  HIDRAULICA
+}
+
+enum maintenance_records_shift {
+  PRIMEIRO
+  SEGUNDO
+  TERCEIRO
 }

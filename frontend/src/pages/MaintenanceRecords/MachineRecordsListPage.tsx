@@ -17,7 +17,9 @@ import { parseApiError } from "../../api/errors";
 import type { Machine } from "../../types/machines";
 import type {
   MaintenanceRecord,
+  MaintenanceRecordCategory,
   MaintenanceRecordPriority,
+  MaintenanceRecordShift,
   MaintenanceRecordStatus,
 } from "../../types/maintenance-records";
 
@@ -25,7 +27,36 @@ type FiltersState = {
   query: string;
   status: "all" | MaintenanceRecordStatus;
   priority: "all" | MaintenanceRecordPriority;
+  category: "all" | MaintenanceRecordCategory;
+  shift: "all" | MaintenanceRecordShift;
 };
+
+const CATEGORY_OPTIONS: Array<{ value: MaintenanceRecordCategory; label: string }> = [
+  { value: "ELETRICA", label: "Elétrica" },
+  { value: "MECANICA", label: "Mecânica" },
+  { value: "PNEUMATICA", label: "Pneumática" },
+  { value: "PROCESSO", label: "Processo" },
+  { value: "ELETRONICA", label: "Eletrônica" },
+  { value: "AUTOMACAO", label: "Automação" },
+  { value: "PREDIAL", label: "Predial" },
+  { value: "FERRAMENTARIA", label: "Ferramentaria" },
+  { value: "REFRIGERACAO", label: "Refrigeração" },
+  { value: "SETUP", label: "Setup" },
+  { value: "HIDRAULICA", label: "Hidráulica" },
+];
+
+const SHIFT_OPTIONS: Array<{ value: MaintenanceRecordShift; label: string }> = [
+  { value: "PRIMEIRO", label: "Primeiro" },
+  { value: "SEGUNDO", label: "Segundo" },
+  { value: "TERCEIRO", label: "Terceiro" },
+];
+
+const CATEGORY_LABELS = new Map(
+  CATEGORY_OPTIONS.map((option) => [option.value, option.label]),
+);
+const SHIFT_LABELS = new Map(
+  SHIFT_OPTIONS.map((option) => [option.value, option.label]),
+);
 
 function formatDateTime(value?: string | null) {
   if (!value) return "-";
@@ -86,6 +117,8 @@ export function MachineRecordsListPage() {
     query: "",
     status: "all",
     priority: "all",
+    category: "all",
+    shift: "all",
   });
 
   useEffect(() => {
@@ -116,6 +149,8 @@ export function MachineRecordsListPage() {
       filters.query,
       filters.status !== "all" ? "1" : "",
       filters.priority !== "all" ? "1" : "",
+      filters.category !== "all" ? "1" : "",
+      filters.shift !== "all" ? "1" : "",
     ].filter(Boolean).length;
   }, [filters]);
 
@@ -135,7 +170,21 @@ export function MachineRecordsListPage() {
           ? true
           : record.priority === filters.priority;
 
-      return matchesQuery && matchesStatus && matchesPriority;
+      const matchesCategory =
+        filters.category === "all"
+          ? true
+          : record.category === filters.category;
+
+      const matchesShift =
+        filters.shift === "all" ? true : record.shift === filters.shift;
+
+      return (
+        matchesQuery &&
+        matchesStatus &&
+        matchesPriority &&
+        matchesCategory &&
+        matchesShift
+      );
     });
   }, [records, filters]);
 
@@ -176,7 +225,13 @@ export function MachineRecordsListPage() {
   }
 
   function handleClearFilters() {
-    setFilters({ query: "", status: "all", priority: "all" });
+    setFilters({
+      query: "",
+      status: "all",
+      priority: "all",
+      category: "all",
+      shift: "all",
+    });
     setPage(1);
   }
 
@@ -524,6 +579,16 @@ export function MachineRecordsListPage() {
                     Prioridade: {filters.priority}
                   </span>
                 )}
+                {filters.shift !== "all" && (
+                  <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
+                    Turno: {SHIFT_LABELS.get(filters.shift) ?? filters.shift}
+                  </span>
+                )}
+                {filters.category !== "all" && (
+                  <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
+                    Categoria: {CATEGORY_LABELS.get(filters.category) ?? filters.category}
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={handleClearFilters}
@@ -762,6 +827,46 @@ export function MachineRecordsListPage() {
                     <option value="HIGH">Alta</option>
                     <option value="MEDIUM">Média</option>
                     <option value="LOW">Baixa</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-slate-800">
+                    Turno
+                  </label>
+                  <select
+                    value={filters.shift}
+                    onChange={(event) =>
+                      handleFilterChange("shift", event.target.value)
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                  >
+                    <option value="all">Todos</option>
+                    {SHIFT_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-slate-800">
+                    Categoria
+                  </label>
+                  <select
+                    value={filters.category}
+                    onChange={(event) =>
+                      handleFilterChange("category", event.target.value)
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                  >
+                    <option value="all">Todas</option>
+                    {CATEGORY_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

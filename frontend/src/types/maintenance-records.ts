@@ -2,6 +2,19 @@ import type { Id } from "./api";
 
 export type MaintenanceRecordStatus = "PENDING" | "DONE";
 export type MaintenanceRecordPriority = "LOW" | "MEDIUM" | "HIGH";
+export type MaintenanceRecordCategory =
+  | "ELETRICA"
+  | "MECANICA"
+  | "PNEUMATICA"
+  | "PROCESSO"
+  | "ELETRONICA"
+  | "AUTOMACAO"
+  | "PREDIAL"
+  | "FERRAMENTARIA"
+  | "REFRIGERACAO"
+  | "SETUP"
+  | "HIDRAULICA";
+export type MaintenanceRecordShift = "PRIMEIRO" | "SEGUNDO" | "TERCEIRO";
 
 export type MaintenanceRecord = {
   id: Id;
@@ -10,6 +23,8 @@ export type MaintenanceRecord = {
   finished_by: Id | null;
   status: MaintenanceRecordStatus;
   priority: MaintenanceRecordPriority;
+  category: MaintenanceRecordCategory;
+  shift: MaintenanceRecordShift;
   problem_description: string;
   solution_description: string | null;
   started_at: string | null;
@@ -21,6 +36,8 @@ export type MaintenanceRecord = {
 export type CreateMaintenanceRecordRequest = {
   problem_description: string;
   priority?: MaintenanceRecordPriority;
+  category: MaintenanceRecordCategory;
+  shift: MaintenanceRecordShift;
   started_at?: string;
 };
 

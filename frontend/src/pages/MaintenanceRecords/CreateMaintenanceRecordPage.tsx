@@ -15,13 +15,39 @@ import {
   type CreateMaintenanceRecordFormValues,
 } from "../../schemas/maintenance-records.schema";
 import type { Machine } from "../../types/machines";
-import type { CreateMaintenanceRecordRequest } from "../../types/maintenance-records";
+import type {
+  CreateMaintenanceRecordRequest,
+  MaintenanceRecordCategory,
+  MaintenanceRecordShift,
+} from "../../types/maintenance-records";
+
+const CATEGORY_OPTIONS: Array<{ value: MaintenanceRecordCategory; label: string }> = [
+  { value: "ELETRICA", label: "Elétrica" },
+  { value: "MECANICA", label: "Mecânica" },
+  { value: "PNEUMATICA", label: "Pneumática" },
+  { value: "PROCESSO", label: "Processo" },
+  { value: "ELETRONICA", label: "Eletrônica" },
+  { value: "AUTOMACAO", label: "Automação" },
+  { value: "PREDIAL", label: "Predial" },
+  { value: "FERRAMENTARIA", label: "Ferramentaria" },
+  { value: "REFRIGERACAO", label: "Refrigeração" },
+  { value: "SETUP", label: "Setup" },
+  { value: "HIDRAULICA", label: "Hidráulica" },
+];
+
+const SHIFT_OPTIONS: Array<{ value: MaintenanceRecordShift; label: string }> = [
+  { value: "PRIMEIRO", label: "Primeiro" },
+  { value: "SEGUNDO", label: "Segundo" },
+  { value: "TERCEIRO", label: "Terceiro" },
+];
 
 function normalizePayload(
   values: CreateMaintenanceRecordFormValues,
 ): CreateMaintenanceRecordRequest {
   const payload: CreateMaintenanceRecordRequest = {
     problem_description: values.problem_description.trim(),
+    category: values.category,
+    shift: values.shift,
   };
 
   if (values.priority) payload.priority = values.priority;
@@ -40,6 +66,8 @@ export function CreateMaintenanceRecordPage() {
     () => ({
       problem_description: "",
       priority: "MEDIUM",
+      category: "MECANICA",
+      shift: "PRIMEIRO",
     }),
     [],
   );
@@ -155,6 +183,46 @@ export function CreateMaintenanceRecordPage() {
                 <option value="MEDIUM">Média</option>
                 <option value="LOW">Baixa</option>
               </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-800">
+                Turno
+              </label>
+              <select
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                {...register("shift")}
+              >
+                {SHIFT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.shift && (
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.shift.message}
+                </p>
+              )}
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium text-slate-800">
+                Categoria
+              </label>
+              <select
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                {...register("category")}
+              >
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.category.message}
+                </p>
+              )}
             </div>
           </div>
 
