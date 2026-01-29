@@ -67,6 +67,7 @@ export function EditMaintenanceRecordPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [beforePhoto, setBeforePhoto] = useState<StoredPhoto | null>(null);
   const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
+  const [photoRequired, setPhotoRequired] = useState(false);
 
   const defaultValues = useMemo<CreateMaintenanceRecordFormValues>(
     () => ({
@@ -136,6 +137,7 @@ export function EditMaintenanceRecordPage() {
         beforePhoto.id,
       );
       setBeforePhoto(null);
+      setPhotoRequired(true);
       sessionStorage.removeItem(`maintenance-photo-before:${recordId}`);
       toast.success("Foto removida.");
     } catch (e) {
@@ -147,6 +149,10 @@ export function EditMaintenanceRecordPage() {
 
   async function onSubmit(values: CreateMaintenanceRecordFormValues) {
     if (!id || !recordId) return;
+    if (photoRequired && !photoFile) {
+      toast.error("Envie a nova foto do problema.");
+      return;
+    }
     try {
       const updated = await MaintenanceRecordsService.update(
         id,
@@ -175,6 +181,7 @@ export function EditMaintenanceRecordPage() {
           photo.file_url,
         );
         setPhotoFile(null);
+        setPhotoRequired(false);
       }
 
       toast.success("Pendência atualizada.");
@@ -294,47 +301,46 @@ export function EditMaintenanceRecordPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-semibold text-slate-800">
-                    Foto atual
+            {beforePhoto && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-800">
+                      Foto atual
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      Remova ou substitua a foto do problema.
+                    </div>
                   </div>
-                  <div className="text-xs text-slate-500">
-                    Remova ou substitua a foto do problema.
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    disabled={isRemovingPhoto}
+                    className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
+                  >
+                    <FiTrash2 />
+                    {isRemovingPhoto ? "Removendo..." : "Remover foto"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleRemovePhoto}
-                  disabled={!beforePhoto || isRemovingPhoto}
-                  className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
-                >
-                  <FiTrash2 />
-                  {isRemovingPhoto ? "Removendo..." : "Remover foto"}
-                </button>
-              </div>
-              <div className="mt-4 h-44 overflow-hidden rounded-xl border border-slate-200 bg-white">
-                {beforePhoto?.url ? (
+                <div className="mt-4 h-44 overflow-hidden rounded-xl border border-slate-200 bg-white">
                   <img
                     src={beforePhoto.url}
                     alt="Foto do problema"
                     className="h-full w-full object-cover"
                   />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-slate-500">
-                    Sem foto cadastrada
-                  </div>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
-            <ImageUpload
-              label="Nova foto do problema"
-              hint="Opcional"
-              value={photoFile}
-              onChange={setPhotoFile}
-            />
+            {!beforePhoto && (
+              <ImageUpload
+                label="Nova foto do problema"
+                hint={photoRequired ? "Obrigatório" : "Opcional"}
+                required={photoRequired}
+                value={photoFile}
+                onChange={setPhotoFile}
+              />
+            )}
 
             <div className="flex items-center justify-end gap-2">
               <button
