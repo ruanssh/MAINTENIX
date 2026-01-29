@@ -17,7 +17,7 @@ export function CreateUserPage() {
       name: "",
       email: "",
       password: "",
-      role: undefined as unknown as CreateUserFormValues["role"],
+      role: "",
     }),
     [],
   );
@@ -34,7 +34,10 @@ export function CreateUserPage() {
 
   async function onSubmit(values: CreateUserFormValues) {
     try {
-      await UsersService.create(values);
+      await UsersService.create({
+        ...values,
+        role: Number(values.role) as 1 | 2,
+      });
       toast.success("Usuário criado com sucesso.");
       reset(defaultValues);
     } catch (e) {

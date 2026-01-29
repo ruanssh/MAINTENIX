@@ -14,16 +14,12 @@ import { z } from "zod";
 const updateUserSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório."),
   email: z.string().email("Informe um e-mail válido."),
-  role: z.preprocess(
-    (value) => (value === "" ? undefined : Number(value)),
-    z.union([z.literal(1), z.literal(2)], {
-      required_error: "Selecione o perfil.",
-    }),
-  ),
-  active: z.preprocess(
-    (value) => (value === "" ? undefined : value === "true"),
-    z.boolean({ required_error: "Selecione o status." }),
-  ),
+  role: z
+    .union([z.literal("1"), z.literal("2"), z.literal("")])
+    .refine((value) => value !== "", { message: "Selecione o perfil." }),
+  active: z
+    .union([z.literal("true"), z.literal("false"), z.literal("")])
+    .refine((value) => value !== "", { message: "Selecione o status." }),
 });
 
 type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
@@ -38,8 +34,8 @@ export function EditUserPage() {
     () => ({
       name: "",
       email: "",
-      role: undefined as unknown as UpdateUserFormValues["role"],
-      active: undefined as unknown as UpdateUserFormValues["active"],
+      role: "",
+      active: "",
     }),
     [],
   );
@@ -64,8 +60,8 @@ export function EditUserPage() {
         reset({
           name: data.name,
           email: data.email,
-          role: data.role,
-          active: data.active,
+          role: String(data.role) as UpdateUserFormValues["role"],
+          active: String(data.active) as UpdateUserFormValues["active"],
         });
       } catch (e) {
         toast.error(parseApiError(e));
@@ -83,8 +79,8 @@ export function EditUserPage() {
     const payload: UpdateUserRequest = {
       name: values.name.trim(),
       email: values.email.trim(),
-      role: values.role,
-      active: values.active,
+      role: Number(values.role) as 1 | 2,
+      active: values.active === "true",
     };
     try {
       const updated = await UsersService.update(id, payload);

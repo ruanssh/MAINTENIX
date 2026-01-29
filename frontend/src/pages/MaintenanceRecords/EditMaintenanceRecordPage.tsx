@@ -57,9 +57,11 @@ function normalizePayload(
 ): CreateMaintenanceRecordRequest {
   return {
     problem_description: values.problem_description.trim(),
-    priority: values.priority,
-    category: values.category,
-    shift: values.shift,
+    priority: values.priority
+      ? (values.priority as CreateMaintenanceRecordRequest["priority"])
+      : undefined,
+    category: values.category as CreateMaintenanceRecordRequest["category"],
+    shift: values.shift as CreateMaintenanceRecordRequest["shift"],
     responsible_id: values.responsible_id,
   };
 }
@@ -85,6 +87,7 @@ export function EditMaintenanceRecordPage() {
       priority: "",
       category: "",
       shift: "",
+      responsible_id: "",
     }),
     [],
   );

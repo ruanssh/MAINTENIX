@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { FiFilter, FiInbox } from "react-icons/fi";
+import { FiFilter } from "react-icons/fi";
 
 import { AppLayout } from "../../layouts/AppLayout";
 import { UsersService } from "../../services/users.service";

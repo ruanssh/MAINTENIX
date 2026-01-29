@@ -51,12 +51,15 @@ function normalizePayload(
 ): CreateMaintenanceRecordRequest {
   const payload: CreateMaintenanceRecordRequest = {
     problem_description: values.problem_description.trim(),
-    category: values.category,
-    shift: values.shift,
+    category: values.category as CreateMaintenanceRecordRequest["category"],
+    shift: values.shift as CreateMaintenanceRecordRequest["shift"],
     responsible_id: values.responsible_id,
   };
 
-  if (values.priority) payload.priority = values.priority;
+  if (values.priority) {
+    payload.priority =
+      values.priority as CreateMaintenanceRecordRequest["priority"];
+  }
 
   return payload;
 }
