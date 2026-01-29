@@ -66,4 +66,14 @@ export const MaintenanceRecordsService = {
     );
     return data;
   },
+
+  async listPhotos(
+    machineId: string,
+    recordId: string,
+  ): Promise<MaintenancePhoto[]> {
+    const { data } = await http.get<MaintenancePhoto[]>(
+      `/machines/${machineId}/maintenance-records/${recordId}/photos`,
+    );
+    return data;
+  },
 };

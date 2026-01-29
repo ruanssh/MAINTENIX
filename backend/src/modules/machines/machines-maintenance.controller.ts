@@ -130,6 +130,17 @@ export class MachinesMaintenanceController {
     );
   }
 
+  @Get(':recordId/photos')
+  listPhotos(
+    @Param('machineId') machineId: string,
+    @Param('recordId') recordId: string,
+  ) {
+    return this.maintenance.listPhotos(
+      this.parseId(machineId),
+      this.parseId(recordId),
+    );
+  }
+
   @Get(':recordId/events')
   listEvents(
     @Param('machineId') machineId: string,

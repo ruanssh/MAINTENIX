@@ -165,14 +165,17 @@ export class MachinesMaintenanceService {
         file_url: fileUrl,
         created_by: createdBy,
       },
-      select: {
-        id: true,
-        maintenance_record_id: true,
-        type: true,
-        file_url: true,
-        created_by: true,
-        created_at: true,
-      },
+      select: this.photoSelect(),
+    });
+  }
+
+  async listPhotos(machineId: bigint, recordId: bigint) {
+    await this.ensureRecord(machineId, recordId);
+
+    return this.prisma.maintenance_photos.findMany({
+      where: { maintenance_record_id: recordId },
+      orderBy: { created_at: 'desc' },
+      select: this.photoSelect(),
     });
   }
 
@@ -223,6 +226,17 @@ export class MachinesMaintenanceService {
       destination: true,
       observation: true,
       photo_url: true,
+      created_by: true,
+      created_at: true,
+    };
+  }
+
+  private photoSelect() {
+    return {
+      id: true,
+      maintenance_record_id: true,
+      type: true,
+      file_url: true,
       created_by: true,
       created_at: true,
     };

@@ -107,16 +107,28 @@ export function FinishMaintenanceRecordPage() {
           MachinesService.findById(id),
           MaintenanceRecordsService.findById(id, recordId),
         ]);
+        const photos = await MaintenanceRecordsService.listPhotos(
+          id,
+          recordId,
+        );
         setMachine(machineData);
         setRecord(recordData);
-        const beforeStored = sessionStorage.getItem(
-          `maintenance-photo-before:${recordData.id}`,
-        );
-        const afterStored = sessionStorage.getItem(
-          `maintenance-photo-after:${recordData.id}`,
-        );
-        if (beforeStored) setBeforePhotoUrl(beforeStored);
-        if (afterStored) setAfterPhotoUrl(afterStored);
+        const beforePhoto = photos.find((photo) => photo.type === "BEFORE");
+        const afterPhoto = photos.find((photo) => photo.type === "AFTER");
+        if (beforePhoto) setBeforePhotoUrl(beforePhoto.file_url);
+        if (afterPhoto) setAfterPhotoUrl(afterPhoto.file_url);
+        if (!beforePhoto) {
+          const beforeStored = sessionStorage.getItem(
+            `maintenance-photo-before:${recordData.id}`,
+          );
+          if (beforeStored) setBeforePhotoUrl(beforeStored);
+        }
+        if (!afterPhoto) {
+          const afterStored = sessionStorage.getItem(
+            `maintenance-photo-after:${recordData.id}`,
+          );
+          if (afterStored) setAfterPhotoUrl(afterStored);
+        }
         reset({
           solution_description: recordData.solution_description ?? "",
         });
