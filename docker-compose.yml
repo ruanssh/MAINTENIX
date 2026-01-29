@@ -5,9 +5,12 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ./backend/.env.dev
+      - ./backend/.env
     environment:
       NODE_ENV: production
+      MINIO_ENDPOINT: http://host.docker.internal:9000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   frontend:
     build:
