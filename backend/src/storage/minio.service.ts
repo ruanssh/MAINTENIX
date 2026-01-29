@@ -81,6 +81,16 @@ export class MinioService implements OnModuleInit {
     return this.getPublicUrl(params.objectName);
   }
 
+  async removeByUrl(fileUrl: string) {
+    const prefix = `${this.baseUrl}/${this.bucket}/`;
+    if (!fileUrl.startsWith(prefix)) return;
+
+    const objectName = fileUrl.slice(prefix.length);
+    if (!objectName) return;
+
+    await this.client.removeObject(this.bucket, objectName);
+  }
+
   getPublicUrl(objectName: string) {
     return `${this.baseUrl}/${this.bucket}/${objectName}`;
   }

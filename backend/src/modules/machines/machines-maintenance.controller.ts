@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -28,6 +29,7 @@ import { FinishMaintenanceRecordDto } from './dto/finish-maintenance-record.dto'
 import { ListMaintenanceRecordsQueryDto } from './dto/list-maintenance-records.dto';
 import { CreateMaintenanceEventDto } from './dto/create-maintenance-event.dto';
 import { CreateMaintenancePhotoDto } from './dto/create-maintenance-photo.dto';
+import { UpdateMaintenanceRecordDto } from './dto/update-maintenance-record.dto';
 
 @ApiTags('machines')
 @ApiBearerAuth('jwt')
@@ -66,6 +68,19 @@ export class MachinesMaintenanceController {
     return this.maintenance.findRecord(
       this.parseId(machineId),
       this.parseId(recordId),
+    );
+  }
+
+  @Patch(':recordId')
+  updateRecord(
+    @Param('machineId') machineId: string,
+    @Param('recordId') recordId: string,
+    @Body() dto: UpdateMaintenanceRecordDto,
+  ) {
+    return this.maintenance.updateRecord(
+      this.parseId(machineId),
+      this.parseId(recordId),
+      dto,
     );
   }
 
@@ -138,6 +153,19 @@ export class MachinesMaintenanceController {
     return this.maintenance.listPhotos(
       this.parseId(machineId),
       this.parseId(recordId),
+    );
+  }
+
+  @Delete(':recordId/photos/:photoId')
+  removePhoto(
+    @Param('machineId') machineId: string,
+    @Param('recordId') recordId: string,
+    @Param('photoId') photoId: string,
+  ) {
+    return this.maintenance.removePhoto(
+      this.parseId(machineId),
+      this.parseId(recordId),
+      this.parseId(photoId),
     );
   }
 

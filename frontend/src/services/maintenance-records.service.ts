@@ -47,6 +47,18 @@ export const MaintenanceRecordsService = {
     return data;
   },
 
+  async update(
+    machineId: string,
+    recordId: string,
+    payload: CreateMaintenanceRecordRequest,
+  ): Promise<MaintenanceRecord> {
+    const { data } = await http.patch<MaintenanceRecord>(
+      `/machines/${machineId}/maintenance-records/${recordId}`,
+      payload,
+    );
+    return data;
+  },
+
   async uploadPhoto(
     machineId: string,
     recordId: string,
@@ -73,6 +85,17 @@ export const MaintenanceRecordsService = {
   ): Promise<MaintenancePhoto[]> {
     const { data } = await http.get<MaintenancePhoto[]>(
       `/machines/${machineId}/maintenance-records/${recordId}/photos`,
+    );
+    return data;
+  },
+
+  async removePhoto(
+    machineId: string,
+    recordId: string,
+    photoId: string,
+  ): Promise<MaintenancePhoto> {
+    const { data } = await http.delete<MaintenancePhoto>(
+      `/machines/${machineId}/maintenance-records/${recordId}/photos/${photoId}`,
     );
     return data;
   },

@@ -8,6 +8,7 @@ import {
   CreateMaintenanceRecordDto,
   MaintenanceRecordPriority,
 } from './dto/create-maintenance-record.dto';
+import { UpdateMaintenanceRecordDto } from './dto/update-maintenance-record.dto';
 import { FinishMaintenanceRecordDto } from './dto/finish-maintenance-record.dto';
 import {
   CreateMaintenanceEventDto,
@@ -104,6 +105,42 @@ export class MachinesMaintenanceService {
     });
   }
 
+  async updateRecord(
+    machineId: bigint,
+    recordId: bigint,
+    dto: UpdateMaintenanceRecordDto,
+  ) {
+    const existing = await this.prisma.maintenance_records.findFirst({
+      where: { id: recordId, machine_id: machineId },
+    });
+    if (!existing) throw new NotFoundException('Registro não encontrado');
+    if (existing.status === 'DONE') {
+      throw new BadRequestException('Registro já finalizado');
+    }
+
+    const data = {
+      problem_description: dto.problem_description,
+      priority: dto.priority,
+      category: dto.category,
+      shift: dto.shift,
+      started_at: dto.started_at ? new Date(dto.started_at) : undefined,
+    };
+
+    const hasUpdates = Object.values(data).some((value) => value !== undefined);
+    if (!hasUpdates) {
+      throw new BadRequestException('Nenhuma informação para atualizar');
+    }
+
+    return this.prisma.maintenance_records.update({
+      where: { id: recordId },
+      data: {
+        ...data,
+        updated_at: new Date(),
+      },
+      select: this.recordSelect(),
+    });
+  }
+
   async createEvent(
     machineId: bigint,
     recordId: bigint,
@@ -177,6 +214,33 @@ export class MachinesMaintenanceService {
     return this.prisma.maintenance_photos.findMany({
       where: { maintenance_record_id: recordId },
       orderBy: { created_at: 'desc' },
+      select: this.photoSelect(),
+    });
+  }
+
+  async removePhoto(machineId: bigint, recordId: bigint, photoId: bigint) {
+    const record = await this.prisma.maintenance_records.findFirst({
+      where: { id: recordId, machine_id: machineId },
+      select: { id: true, status: true },
+    });
+    if (!record) throw new NotFoundException('Registro não encontrado');
+    if (record.status === 'DONE') {
+      throw new BadRequestException('Registro já finalizado');
+    }
+
+    const photo = await this.prisma.maintenance_photos.findFirst({
+      where: { id: photoId, maintenance_record_id: recordId },
+    });
+    if (!photo) throw new NotFoundException('Foto não encontrada');
+
+    try {
+      await this.storage.removeByUrl(photo.file_url);
+    } catch {
+      // ignore storage errors to avoid blocking DB cleanup
+    }
+
+    return this.prisma.maintenance_photos.delete({
+      where: { id: photoId },
       select: this.photoSelect(),
     });
   }
