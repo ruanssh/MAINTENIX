@@ -614,6 +614,10 @@ export function MachineRecordsListPage() {
                     Pendência
                   </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Turno</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Categoria
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Prioridade
                   </th>
@@ -628,33 +632,33 @@ export function MachineRecordsListPage() {
               <tbody>
                 {loading && (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-4 py-10 text-center text-slate-500"
-                    >
-                      Carregando pendências...
+                      <td
+                        colSpan={7}
+                        className="px-4 py-10 text-center text-slate-500"
+                      >
+                        Carregando pendências...
                     </td>
                   </tr>
                 )}
 
                 {!loading && records.length === 0 && (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-4 py-10 text-center text-slate-500"
-                    >
-                      Nenhuma pendência cadastrada.
+                      <td
+                        colSpan={7}
+                        className="px-4 py-10 text-center text-slate-500"
+                      >
+                        Nenhuma pendência cadastrada.
                     </td>
                   </tr>
                 )}
 
                 {!loading && records.length > 0 && totalItems === 0 && (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-4 py-10 text-center text-slate-500"
-                    >
-                      Nenhuma pendência encontrada com os filtros atuais.
+                      <td
+                        colSpan={7}
+                        className="px-4 py-10 text-center text-slate-500"
+                      >
+                        Nenhuma pendência encontrada com os filtros atuais.
                     </td>
                   </tr>
                 )}
@@ -679,6 +683,12 @@ export function MachineRecordsListPage() {
                       </td>
                       <td className="px-4 py-4">
                         <StatusBadge status={record.status} />
+                      </td>
+                      <td className="px-4 py-4 text-slate-600">
+                        {SHIFT_LABELS.get(record.shift) ?? record.shift}
+                      </td>
+                      <td className="px-4 py-4 text-slate-600">
+                        {CATEGORY_LABELS.get(record.category) ?? record.category}
                       </td>
                       <td className="px-4 py-4">
                         <PriorityBadge priority={record.priority} />

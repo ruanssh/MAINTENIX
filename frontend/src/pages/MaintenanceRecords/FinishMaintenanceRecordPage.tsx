@@ -18,7 +18,29 @@ import type { Machine } from "../../types/machines";
 import type {
   FinishMaintenanceRecordRequest,
   MaintenanceRecord,
+  MaintenanceRecordCategory,
+  MaintenanceRecordShift,
 } from "../../types/maintenance-records";
+
+const CATEGORY_LABELS = new Map<MaintenanceRecordCategory, string>([
+  ["ELETRICA", "Elétrica"],
+  ["MECANICA", "Mecânica"],
+  ["PNEUMATICA", "Pneumática"],
+  ["PROCESSO", "Processo"],
+  ["ELETRONICA", "Eletrônica"],
+  ["AUTOMACAO", "Automação"],
+  ["PREDIAL", "Predial"],
+  ["FERRAMENTARIA", "Ferramentaria"],
+  ["REFRIGERACAO", "Refrigeração"],
+  ["SETUP", "Setup"],
+  ["HIDRAULICA", "Hidráulica"],
+]);
+
+const SHIFT_LABELS = new Map<MaintenanceRecordShift, string>([
+  ["PRIMEIRO", "Primeiro"],
+  ["SEGUNDO", "Segundo"],
+  ["TERCEIRO", "Terceiro"],
+]);
 
 function ImagePreviewCard({
   title,
@@ -239,6 +261,24 @@ export function FinishMaintenanceRecordPage() {
                     </span>
                     <p className="mt-1">
                       {record.status === "DONE" ? "Resolvida" : "Pendente"}
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <span className="text-xs font-semibold uppercase text-slate-500">
+                      Turno
+                    </span>
+                    <p className="mt-1">
+                      {SHIFT_LABELS.get(record.shift) ?? record.shift}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold uppercase text-slate-500">
+                      Categoria
+                    </span>
+                    <p className="mt-1">
+                      {CATEGORY_LABELS.get(record.category) ?? record.category}
                     </p>
                   </div>
                 </div>
