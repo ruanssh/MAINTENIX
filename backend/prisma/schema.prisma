@@ -99,6 +99,7 @@ model users {
   active                                                     Boolean               @default(true)
   created_at                                                 DateTime              @default(now()) @db.Timestamp(0)
   updated_at                                                 DateTime              @default(now()) @db.Timestamp(0)
+  role                                                       Int
   machines                                                   machines[]
   maintenance_events                                         maintenance_events[]
   maintenance_photos                                         maintenance_photos[]

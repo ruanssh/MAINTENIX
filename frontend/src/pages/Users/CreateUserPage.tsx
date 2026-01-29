@@ -13,7 +13,12 @@ import {
 
 export function CreateUserPage() {
   const defaultValues = useMemo<CreateUserFormValues>(
-    () => ({ name: "", email: "", password: "" }),
+    () => ({
+      name: "",
+      email: "",
+      password: "",
+      role: undefined as unknown as CreateUserFormValues["role"],
+    }),
     [],
   );
 
@@ -89,6 +94,23 @@ export function CreateUserPage() {
             {errors.password && (
               <p className="mt-1 text-xs text-red-600">
                 {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-800">Perfil</label>
+            <select
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900"
+              {...register("role")}
+            >
+              <option value="">Selecione</option>
+              <option value="1">Administrador</option>
+              <option value="2">Usuário</option>
+            </select>
+            {errors.role && (
+              <p className="mt-1 text-xs text-red-600">
+                {errors.role.message}
               </p>
             )}
           </div>

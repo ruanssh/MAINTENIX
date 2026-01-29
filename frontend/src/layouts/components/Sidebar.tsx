@@ -32,7 +32,7 @@ export function Sidebar() {
           Máquinas
         </NavLink>
 
-        <NavLink to="/internal/users/new" className={linkClassName}>
+        <NavLink to="/users" className={linkClassName}>
           Usuários
         </NavLink>
       </nav>

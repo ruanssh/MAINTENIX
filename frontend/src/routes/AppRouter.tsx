@@ -2,6 +2,8 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { LoginPage } from "../pages/Login/LoginPage";
 import { HomePage } from "../pages/Home/HomePage";
 import { CreateUserPage } from "../pages/Users/CreateUserPage";
+import { UsersListPage } from "../pages/Users/UsersListPage";
+import { EditUserPage } from "../pages/Users/EditUserPage";
 import { MachinesListPage } from "../pages/Machines/MachinesListPage";
 import { CreateMachinePage } from "../pages/Machines/CreateMachinePage";
 import { EditMachinePage } from "../pages/Machines/EditMachinePage";
@@ -90,10 +92,28 @@ export function AppRouter() {
 
       {/* Hidden route: not linked anywhere */}
       <Route
-        path="/internal/users/new"
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <UsersListPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/users/new"
         element={
           <ProtectedRoute>
             <CreateUserPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/users/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditUserPage />
           </ProtectedRoute>
         }
       />

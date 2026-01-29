@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -25,12 +26,14 @@ export class UsersService {
         email: dto.email,
         password_hash,
         active: true,
+        role: dto.role,
       },
       select: {
         id: true,
         name: true,
         email: true,
         active: true,
+        role: true,
         created_at: true,
         updated_at: true,
       },
@@ -51,6 +54,7 @@ export class UsersService {
         name: true,
         email: true,
         active: true,
+        role: true,
         created_at: true,
         updated_at: true,
       },
@@ -67,6 +71,48 @@ export class UsersService {
         name: true,
         email: true,
         active: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+  }
+
+  async update(id: bigint, dto: UpdateUserDto) {
+    const existing = await this.prisma.users.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Usuário não encontrado');
+
+    if (dto.email && dto.email !== existing.email) {
+      const emailExists = await this.prisma.users.findUnique({
+        where: { email: dto.email },
+      });
+      if (emailExists) throw new BadRequestException('Email já cadastrado');
+    }
+
+    const data = {
+      name: dto.name,
+      email: dto.email,
+      role: dto.role,
+      active: dto.active,
+    };
+
+    const hasUpdates = Object.values(data).some((value) => value !== undefined);
+    if (!hasUpdates) {
+      throw new BadRequestException('Nenhuma informação para atualizar');
+    }
+
+    return this.prisma.users.update({
+      where: { id },
+      data: {
+        ...data,
+        updated_at: new Date(),
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        active: true,
+        role: true,
         created_at: true,
         updated_at: true,
       },

@@ -6,6 +6,12 @@ export const createUserSchema = z.object({
   password: z
     .string()
     .min(6, "A senha deve ter pelo menos 6 caracteres."),
+  role: z.preprocess(
+    (value) => (value === "" ? undefined : Number(value)),
+    z.union([z.literal(1), z.literal(2)], {
+      required_error: "Selecione o perfil.",
+    }),
+  ),
 });
 
 export type CreateUserFormValues = z.infer<typeof createUserSchema>;
