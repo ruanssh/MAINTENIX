@@ -412,6 +412,7 @@ export function UserInboxPage() {
                   <div className="flex flex-col gap-2">
                     <Link
                       to={`/machines/${record.machine_id}/maintenance-records/${record.id}`}
+                      state={{ from: "/inbox" }}
                       className={`w-full rounded-lg px-4 py-3 text-center text-sm font-semibold ${
                         record.status === "DONE"
                           ? "border border-slate-200 text-slate-700 hover:bg-slate-50"

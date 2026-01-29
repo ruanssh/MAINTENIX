@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -112,6 +112,7 @@ function normalizePayload(
 export function FinishMaintenanceRecordPage() {
   const { id, recordId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [machine, setMachine] = useState<Machine | null>(null);
   const [record, setRecord] = useState<MaintenanceRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -174,7 +175,12 @@ export function FinishMaintenanceRecordPage() {
         });
       } catch (e) {
         toast.error(parseApiError(e));
-        navigate(`/machines/${id}/maintenance-records`, { replace: true });
+        const fallback = `/machines/${id}/maintenance-records`;
+        const backTo =
+          typeof location.state?.from === "string"
+            ? location.state.from
+            : fallback;
+        navigate(backTo, { replace: true });
       } finally {
         setLoading(false);
       }
@@ -227,7 +233,12 @@ export function FinishMaintenanceRecordPage() {
         photo.file_url,
       );
       toast.success("Pendência finalizada.");
-      navigate(`/machines/${id}/maintenance-records`, { replace: true });
+      const fallback = `/machines/${id}/maintenance-records`;
+      const backTo =
+        typeof location.state?.from === "string"
+          ? location.state.from
+          : fallback;
+      navigate(backTo, { replace: true });
     } catch (e) {
       toast.error(parseApiError(e));
     }
