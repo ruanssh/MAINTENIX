@@ -221,13 +221,15 @@ export function UsersListPage() {
 
         <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] border-separate border-spacing-0 text-left text-sm">
+            <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>
                 <tr className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Usuário</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Perfil</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Criado em</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden md:table-cell">
+                    Criado em
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 text-right">
                     Ações
                   </th>
@@ -302,7 +304,7 @@ export function UsersListPage() {
                           {user.active ? "Ativo" : "Inativo"}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-slate-600">
+                      <td className="px-4 py-4 text-slate-600 hidden md:table-cell">
                         {formatDateTime(user.created_at)}
                       </td>
                       <td className="px-4 py-4 text-right">

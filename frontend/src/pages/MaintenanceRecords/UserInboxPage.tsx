@@ -349,16 +349,22 @@ export function UserInboxPage() {
 
         <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] border-separate border-spacing-0 text-left text-sm">
+            <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>
                 <tr className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Pendência</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Máquina</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Turno</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Categoria</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden md:table-cell">
+                    Turno
+                  </th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden md:table-cell">
+                    Categoria
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Prioridade</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Criada em</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden lg:table-cell">
+                    Criada em
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 text-right">
                     Ações
                   </th>
@@ -425,16 +431,16 @@ export function UserInboxPage() {
                       <td className="px-4 py-4">
                         <StatusBadge status={record.status} />
                       </td>
-                      <td className="px-4 py-4 text-slate-600">
+                      <td className="px-4 py-4 text-slate-600 hidden md:table-cell">
                         {SHIFT_LABELS.get(record.shift) ?? record.shift}
                       </td>
-                      <td className="px-4 py-4 text-slate-600">
+                      <td className="px-4 py-4 text-slate-600 hidden md:table-cell">
                         {CATEGORY_LABELS.get(record.category) ?? record.category}
                       </td>
                       <td className="px-4 py-4">
                         <PriorityBadge priority={record.priority} />
                       </td>
-                      <td className="px-4 py-4 text-slate-600">
+                      <td className="px-4 py-4 text-slate-600 hidden lg:table-cell">
                         {formatDateTime(record.created_at)}
                       </td>
                       <td className="px-4 py-4 text-right">

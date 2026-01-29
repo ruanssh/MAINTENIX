@@ -300,7 +300,7 @@ export function MachinesListPage() {
         {/* Table */}
         <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] border-separate border-spacing-0 text-left text-sm">
+            <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>
                 <tr className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
