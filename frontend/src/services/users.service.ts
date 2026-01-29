@@ -28,6 +28,14 @@ export const UsersService = {
     return data;
   },
 
+  async changePassword(current_password: string, new_password: string) {
+    const { data } = await http.patch("/users/me/password", {
+      current_password,
+      new_password,
+    });
+    return data as { success: boolean };
+  },
+
   async listAssignedMaintenanceRecords(): Promise<MaintenanceRecordWithMachine[]> {
     const { data } = await http.get<MaintenanceRecordWithMachine[]>(
       "/users/me/maintenance-records",

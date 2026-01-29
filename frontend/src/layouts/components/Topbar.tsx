@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FiLogOut, FiMenu, FiMoon, FiSun } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { FiChevronDown, FiLogOut, FiMenu, FiMoon, FiSun } from "react-icons/fi";
 import { useAuth } from "../../auth/AuthContext";
 import maintenixLogo from "../../assets/maintenix.svg";
 import maintenixLogoDark from "../../assets/maintenix-dark.svg";
@@ -12,6 +13,7 @@ type Props = {
 export function Topbar({ title, onToggleMenu }: Props) {
   const { user, logout } = useAuth();
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const current =
@@ -69,13 +71,6 @@ export function Topbar({ title, onToggleMenu }: Props) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden sm:flex flex-col items-end leading-tight">
-            <span className="text-sm font-medium text-slate-900">
-              {user?.name ?? "Usuário"}
-            </span>
-            <span className="text-xs text-slate-500">{user?.email ?? ""}</span>
-          </div>
-
           <button
             type="button"
             onClick={handleToggleTheme}
@@ -89,13 +84,55 @@ export function Topbar({ title, onToggleMenu }: Props) {
           >
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
-          <button
-            onClick={logout}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-sm font-medium text-slate-900 hover:bg-slate-50 sm:h-auto sm:w-auto sm:px-3 sm:py-2"
-          >
-            <FiLogOut className="sm:hidden" />
-            <span className="hidden sm:inline">Sair</span>
-          </button>
+
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50"
+            >
+              <span className="max-w-[140px] truncate">
+                {user?.name ?? "Usuário"}
+              </span>
+              <FiChevronDown className="text-slate-500" />
+            </button>
+
+            {isMenuOpen && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Fechar menu"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="fixed inset-0 z-10"
+                />
+                <div className="absolute right-0 top-12 z-20 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                  <div className="px-4 py-3 text-xs text-slate-500">
+                    {user?.email ?? ""}
+                  </div>
+                  <div className="border-t border-slate-200">
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                      Meu perfil
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        logout();
+                      }}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                      <FiLogOut className="text-slate-500" />
+                      Sair
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

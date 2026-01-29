@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -29,6 +30,14 @@ export class UsersController {
   listAssigned(@Req() req: any) {
     const userId = BigInt(req.user.sub);
     return this.users.listAssignedMaintenanceRecords(userId);
+  }
+
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/password')
+  changePassword(@Req() req: any, @Body() dto: ChangePasswordDto) {
+    const userId = BigInt(req.user.sub);
+    return this.users.changePassword(userId, dto);
   }
 
   @ApiBearerAuth('jwt')

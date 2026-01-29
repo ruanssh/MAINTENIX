@@ -13,6 +13,7 @@ import { FinishMaintenanceRecordPage } from "../pages/MaintenanceRecords/FinishM
 import { EditMaintenanceRecordPage } from "../pages/MaintenanceRecords/EditMaintenanceRecordPage";
 import { UserInboxPage } from "../pages/MaintenanceRecords/UserInboxPage";
 import { AccessDeniedPage } from "../pages/Access/AccessDeniedPage";
+import { ProfilePage } from "../pages/Profile/ProfilePage";
 import { ProtectedRoute } from "../auth/ProtectedRoute";
 
 export function AppRouter() {
@@ -43,6 +44,15 @@ export function AppRouter() {
         element={
           <ProtectedRoute>
             <AccessDeniedPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

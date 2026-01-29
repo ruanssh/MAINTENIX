@@ -7,6 +7,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -144,5 +145,25 @@ export class UsersService {
         updated_at: true,
       },
     });
+  }
+
+  async changePassword(id: bigint, dto: ChangePasswordDto) {
+    const user = await this.prisma.users.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    const isValid = await bcrypt.compare(dto.current_password, user.password_hash);
+    if (!isValid) throw new BadRequestException('Senha atual incorreta');
+
+    const password_hash = await bcrypt.hash(dto.new_password, 10);
+
+    await this.prisma.users.update({
+      where: { id },
+      data: {
+        password_hash,
+        updated_at: new Date(),
+      },
+    });
+
+    return { success: true };
   }
 }
