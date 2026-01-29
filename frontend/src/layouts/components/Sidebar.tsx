@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 import { useAuth } from "../../auth/AuthContext";
 import maintenixLogo from "../../assets/maintenix.svg";
@@ -9,7 +9,7 @@ type SidebarProps = {
   onClose?: () => void;
 };
 
-function linkClassName({ isActive }: { isActive: boolean }) {
+function linkClassName(isActive: boolean) {
   return [
     "sidebar-link flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition",
     isActive
@@ -20,8 +20,12 @@ function linkClassName({ isActive }: { isActive: boolean }) {
 
 export function Sidebar({ variant = "desktop", onClose }: SidebarProps) {
   const { user, loading } = useAuth();
+  const location = useLocation();
   const isAdmin = user?.role === 1;
   const isMobile = variant === "mobile";
+  const isInboxContext =
+    location.pathname === "/inbox" ||
+    (!isAdmin && location.pathname.startsWith("/machines/"));
 
   function handleNavigate() {
     if (isMobile) onClose?.();
@@ -67,14 +71,20 @@ export function Sidebar({ variant = "desktop", onClose }: SidebarProps) {
 
         <NavLink
           to="/"
-          className={linkClassName}
+          className={({ isActive }) => linkClassName(isActive)}
           end
           onClick={handleNavigate}
         >
           Início
         </NavLink>
 
-        <NavLink to="/inbox" className={linkClassName} onClick={handleNavigate}>
+        <NavLink
+          to="/inbox"
+          className={({ isActive }) =>
+            linkClassName(isInboxContext || isActive)
+          }
+          onClick={handleNavigate}
+        >
           Minhas pendências
         </NavLink>
 
@@ -82,7 +92,7 @@ export function Sidebar({ variant = "desktop", onClose }: SidebarProps) {
           <>
             <NavLink
               to="/machines"
-              className={linkClassName}
+              className={({ isActive }) => linkClassName(isActive)}
               onClick={handleNavigate}
             >
               Máquinas
@@ -90,7 +100,7 @@ export function Sidebar({ variant = "desktop", onClose }: SidebarProps) {
 
             <NavLink
               to="/users"
-              className={linkClassName}
+              className={({ isActive }) => linkClassName(isActive)}
               onClick={handleNavigate}
             >
               Usuários

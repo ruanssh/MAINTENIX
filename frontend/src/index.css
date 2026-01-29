@@ -150,3 +150,16 @@ html[data-theme="dark"] .btn-primary {
 html[data-theme="dark"] .btn-primary:hover {
   background-color: #cbd5e1;
 }
+
+html[data-theme="dark"] .meta-item {
+  background-color: #0f172a;
+  border-color: #1f2937;
+}
+
+html[data-theme="dark"] .meta-label {
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .meta-value {
+  color: #e2e8f0;
+}
