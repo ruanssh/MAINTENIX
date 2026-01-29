@@ -34,6 +34,7 @@ export function CreateUserPage() {
 
   async function onSubmit(values: CreateUserFormValues) {
     try {
+      if (!values.role) return;
       await UsersService.create({
         ...values,
         role: Number(values.role) as 1 | 2,

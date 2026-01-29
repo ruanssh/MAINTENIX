@@ -22,7 +22,7 @@ const updateUserSchema = z.object({
     .refine((value) => value !== "", { message: "Selecione o status." }),
 });
 
-type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
+type UpdateUserFormValues = z.input<typeof updateUserSchema>;
 
 export function EditUserPage() {
   const { id } = useParams();
@@ -76,6 +76,7 @@ export function EditUserPage() {
 
   async function onSubmit(values: UpdateUserFormValues) {
     if (!id) return;
+    if (!values.role || !values.active) return;
     const payload: UpdateUserRequest = {
       name: values.name.trim(),
       email: values.email.trim(),

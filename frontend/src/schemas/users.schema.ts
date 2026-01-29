@@ -13,4 +13,4 @@ export const createUserSchema = z.object({
   role: roleSchema,
 });
 
-export type CreateUserFormValues = z.infer<typeof createUserSchema>;
+export type CreateUserFormValues = z.input<typeof createUserSchema>;

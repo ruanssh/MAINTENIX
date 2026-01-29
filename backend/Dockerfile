@@ -7,6 +7,7 @@ RUN npm install
 
 COPY prisma ./prisma
 COPY prisma.config.ts ./
+COPY .env ./
 COPY tsconfig.json tsconfig.build.json ./
 COPY src ./src
 
