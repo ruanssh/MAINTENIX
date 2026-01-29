@@ -32,6 +32,10 @@ export function Sidebar() {
           Início
         </NavLink>
 
+        <NavLink to="/inbox" className={linkClassName}>
+          Minhas pendências
+        </NavLink>
+
         {!loading && isAdmin && (
           <>
             <NavLink to="/machines" className={linkClassName}>

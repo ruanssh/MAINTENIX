@@ -9,6 +9,7 @@ import { AppLayout } from "../../layouts/AppLayout";
 import { ImageUpload } from "../../components/ImageUpload";
 import { MachinesService } from "../../services/machines.service";
 import { MaintenanceRecordsService } from "../../services/maintenance-records.service";
+import { UsersService } from "../../services/users.service";
 import { parseApiError } from "../../api/errors";
 import {
   finishMaintenanceRecordSchema,
@@ -21,6 +22,7 @@ import type {
   MaintenanceRecordCategory,
   MaintenanceRecordShift,
 } from "../../types/maintenance-records";
+import type { User } from "../../types/users";
 
 const CATEGORY_LABELS = new Map<MaintenanceRecordCategory, string>([
   ["ELETRICA", "Elétrica"],
@@ -46,20 +48,22 @@ function ImagePreviewCard({
   title,
   imageUrl,
   onPreview,
+  className = "",
 }: {
   title: string;
   imageUrl: string | null;
   onPreview: (url: string) => void;
+  className?: string;
 }) {
   return (
-    <div>
+    <div className={className}>
       <div className="text-xs font-semibold uppercase text-slate-500">
         {title}
       </div>
       <button
         type="button"
         onClick={() => imageUrl && onPreview(imageUrl)}
-        className="mt-2 flex h-56 w-56 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-500 transition hover:border-slate-300"
+        className="mt-2 flex h-56 w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-500 transition hover:border-slate-300"
       >
         {imageUrl ? (
           <img
@@ -82,6 +86,19 @@ function formatDateTime(value?: string | null) {
   return date.toLocaleString("pt-BR");
 }
 
+function MetaItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white/80 px-3 py-2">
+      <div className="text-[11px] font-semibold uppercase text-slate-500">
+        {label}
+      </div>
+      <div className="mt-1 text-sm font-semibold text-slate-900">
+        {value}
+      </div>
+    </div>
+  );
+}
+
 function normalizePayload(
   values: FinishMaintenanceRecordFormValues,
 ): FinishMaintenanceRecordRequest {
@@ -102,6 +119,7 @@ export function FinishMaintenanceRecordPage() {
   const [afterPhotoFile, setAfterPhotoFile] = useState<File | null>(null);
   const [afterPhotoUrl, setAfterPhotoUrl] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [usersById, setUsersById] = useState<Map<string, User>>(new Map());
 
   const defaultValues = useMemo<FinishMaintenanceRecordFormValues>(
     () => ({
@@ -165,6 +183,26 @@ export function FinishMaintenanceRecordPage() {
     void loadData();
   }, [id, recordId, navigate, reset]);
 
+  useEffect(() => {
+    async function loadUsers() {
+      try {
+        const data = await UsersService.list();
+        setUsersById(new Map(data.map((user) => [user.id, user])));
+      } catch (e) {
+        toast.error(parseApiError(e));
+      }
+    }
+
+    void loadUsers();
+  }, []);
+
+  const responsibleName = record
+    ? usersById.get(record.responsible_id)?.name ?? `#${record.responsible_id}`
+    : "-";
+  const finishedByName = record?.finished_by
+    ? usersById.get(record.finished_by)?.name ?? `#${record.finished_by}`
+    : "-";
+
   async function onSubmit(values: FinishMaintenanceRecordFormValues) {
     if (!id || !recordId) return;
     if (!afterPhotoFile) {
@@ -223,9 +261,15 @@ export function FinishMaintenanceRecordPage() {
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-              <h2 className="text-sm font-semibold text-slate-800">
-                Pendência
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-slate-800">
+                  Pendência
+                </h2>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                  {record.status === "DONE" ? "Resolvida" : "Pendente"}
+                </span>
+              </div>
+
               <div className="mt-4">
                 <ImagePreviewCard
                   title="Foto do problema"
@@ -233,6 +277,7 @@ export function FinishMaintenanceRecordPage() {
                   onPreview={setPreviewUrl}
                 />
               </div>
+
               <div className="mt-4 space-y-3 text-sm text-slate-700">
                 <div>
                   <span className="text-xs font-semibold uppercase text-slate-500">
@@ -242,53 +287,33 @@ export function FinishMaintenanceRecordPage() {
                     {record.problem_description}
                   </p>
                 </div>
+
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Prioridade
-                    </span>
-                    <p className="mt-1">
-                      {record.priority === "HIGH"
+                  <MetaItem
+                    label="Prioridade"
+                    value={
+                      record.priority === "HIGH"
                         ? "Alta"
                         : record.priority === "LOW"
                           ? "Baixa"
-                          : "Média"}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Status
-                    </span>
-                    <p className="mt-1">
-                      {record.status === "DONE" ? "Resolvida" : "Pendente"}
-                    </p>
-                  </div>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Turno
-                    </span>
-                    <p className="mt-1">
-                      {SHIFT_LABELS.get(record.shift) ?? record.shift}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Categoria
-                    </span>
-                    <p className="mt-1">
-                      {CATEGORY_LABELS.get(record.category) ?? record.category}
-                    </p>
-                  </div>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Criada em
-                    </span>
-                    <p className="mt-1">{formatDateTime(record.created_at)}</p>
-                  </div>
+                          : "Média"
+                    }
+                  />
+                  <MetaItem
+                    label="Turno"
+                    value={SHIFT_LABELS.get(record.shift) ?? record.shift}
+                  />
+                  <MetaItem
+                    label="Categoria"
+                    value={
+                      CATEGORY_LABELS.get(record.category) ?? record.category
+                    }
+                  />
+                  <MetaItem label="Responsável" value={responsibleName} />
+                  <MetaItem
+                    label="Criada em"
+                    value={formatDateTime(record.created_at)}
+                  />
                 </div>
               </div>
             </div>
@@ -301,9 +326,14 @@ export function FinishMaintenanceRecordPage() {
                   : "bg-white",
               ].join(" ")}
             >
-              <h2 className="text-sm font-semibold text-slate-800">
-                Resolução
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-slate-800">
+                  Resolução
+                </h2>
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
+                  {record.status === "DONE" ? "Finalizada" : "Em andamento"}
+                </span>
+              </div>
 
               {record.status === "DONE" ? (
                 <div className="mt-4 space-y-4 text-sm text-slate-700">
@@ -322,11 +352,12 @@ export function FinishMaintenanceRecordPage() {
                     </p>
                   </div>
 
-                  <div>
-                    <span className="text-xs font-semibold uppercase text-slate-500">
-                      Finalizado em
-                    </span>
-                    <p className="mt-1">{formatDateTime(record.finished_at)}</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <MetaItem
+                      label="Finalizado em"
+                      value={formatDateTime(record.finished_at)}
+                    />
+                    <MetaItem label="Finalizado por" value={finishedByName} />
                   </div>
                 </div>
               ) : (

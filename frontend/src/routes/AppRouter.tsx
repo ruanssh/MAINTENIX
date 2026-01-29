@@ -11,6 +11,7 @@ import { MachineRecordsListPage } from "../pages/MaintenanceRecords/MachineRecor
 import { CreateMaintenanceRecordPage } from "../pages/MaintenanceRecords/CreateMaintenanceRecordPage";
 import { FinishMaintenanceRecordPage } from "../pages/MaintenanceRecords/FinishMaintenanceRecordPage";
 import { EditMaintenanceRecordPage } from "../pages/MaintenanceRecords/EditMaintenanceRecordPage";
+import { UserInboxPage } from "../pages/MaintenanceRecords/UserInboxPage";
 import { ProtectedRoute } from "../auth/ProtectedRoute";
 
 export function AppRouter() {
@@ -23,6 +24,15 @@ export function AppRouter() {
         element={
           <ProtectedRoute>
             <HomePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/inbox"
+        element={
+          <ProtectedRoute>
+            <UserInboxPage />
           </ProtectedRoute>
         }
       />

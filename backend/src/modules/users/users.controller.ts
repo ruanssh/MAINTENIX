@@ -25,6 +25,14 @@ export class UsersController {
 
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard)
+  @Get('me/maintenance-records')
+  listAssigned(@Req() req: any) {
+    const userId = BigInt(req.user.sub);
+    return this.users.listAssignedMaintenanceRecords(userId);
+  }
+
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard)
   @Get()
   list() {
     return this.users.list();

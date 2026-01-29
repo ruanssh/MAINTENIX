@@ -78,6 +78,33 @@ export class UsersService {
     });
   }
 
+  async listAssignedMaintenanceRecords(userId: bigint) {
+    return this.prisma.maintenance_records.findMany({
+      where: { responsible_id: userId },
+      orderBy: { created_at: 'desc' },
+      select: {
+        id: true,
+        machine_id: true,
+        created_by: true,
+        finished_by: true,
+        responsible_id: true,
+        status: true,
+        priority: true,
+        category: true,
+        shift: true,
+        problem_description: true,
+        solution_description: true,
+        started_at: true,
+        finished_at: true,
+        created_at: true,
+        updated_at: true,
+        machines: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+  }
+
   async update(id: bigint, dto: UpdateUserDto) {
     const existing = await this.prisma.users.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException('Usuário não encontrado');

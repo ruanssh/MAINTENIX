@@ -1,5 +1,6 @@
 import { http } from "../api/http";
 import type { User, CreateUserRequest, UpdateUserRequest } from "../types/users";
+import type { MaintenanceRecordWithMachine } from "../types/maintenance-records";
 
 export const UsersService = {
   async create(payload: CreateUserRequest): Promise<User> {
@@ -24,6 +25,13 @@ export const UsersService = {
 
   async update(id: string, payload: UpdateUserRequest): Promise<User> {
     const { data } = await http.patch<User>(`/users/${id}`, payload);
+    return data;
+  },
+
+  async listAssignedMaintenanceRecords(): Promise<MaintenanceRecordWithMachine[]> {
+    const { data } = await http.get<MaintenanceRecordWithMachine[]>(
+      "/users/me/maintenance-records",
+    );
     return data;
   },
 };

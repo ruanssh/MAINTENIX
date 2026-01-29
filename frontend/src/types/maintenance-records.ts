@@ -34,6 +34,13 @@ export type MaintenanceRecord = {
   updated_at: string;
 };
 
+export type MaintenanceRecordWithMachine = MaintenanceRecord & {
+  machines: {
+    id: Id;
+    name: string;
+  };
+};
+
 export type CreateMaintenanceRecordRequest = {
   problem_description: string;
   priority?: MaintenanceRecordPriority;
