@@ -13,6 +13,7 @@ import {
 import { AppLayout } from "../../layouts/AppLayout";
 import { MachinesService } from "../../services/machines.service";
 import { MaintenanceRecordsService } from "../../services/maintenance-records.service";
+import { UsersService } from "../../services/users.service";
 import { parseApiError } from "../../api/errors";
 import type { Machine } from "../../types/machines";
 import type {
@@ -22,6 +23,7 @@ import type {
   MaintenanceRecordShift,
   MaintenanceRecordStatus,
 } from "../../types/maintenance-records";
+import type { User } from "../../types/users";
 
 type FiltersState = {
   query: string;
@@ -29,6 +31,7 @@ type FiltersState = {
   priority: "all" | MaintenanceRecordPriority;
   category: "all" | MaintenanceRecordCategory;
   shift: "all" | MaintenanceRecordShift;
+  responsible: "" | string;
 };
 
 const CATEGORY_OPTIONS: Array<{
@@ -111,17 +114,22 @@ export function MachineRecordsListPage() {
   const navigate = useNavigate();
   const [machine, setMachine] = useState<Machine | null>(null);
   const [records, setRecords] = useState<MaintenanceRecord[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [isUserListOpen, setIsUserListOpen] = useState(false);
   const [filters, setFilters] = useState<FiltersState>({
     query: "",
     status: "all",
     priority: "all",
     category: "all",
     shift: "all",
+    responsible: "",
   });
 
   useEffect(() => {
@@ -147,6 +155,31 @@ export function MachineRecordsListPage() {
     void loadData();
   }, [id, navigate]);
 
+  useEffect(() => {
+    async function loadUsers() {
+      setLoadingUsers(true);
+      try {
+        const data = await UsersService.list();
+        setUsers(data.filter((user) => user.active));
+      } catch (e) {
+        toast.error(parseApiError(e));
+      } finally {
+        setLoadingUsers(false);
+      }
+    }
+
+    void loadUsers();
+  }, []);
+
+  const selectedResponsible = useMemo(() => {
+    if (!filters.responsible) return null;
+    return users.find((user) => user.id === filters.responsible) ?? null;
+  }, [filters.responsible, users]);
+
+  const usersById = useMemo(() => {
+    return new Map(users.map((user) => [user.id, user]));
+  }, [users]);
+
   const activeFiltersCount = useMemo(() => {
     return [
       filters.query,
@@ -154,6 +187,7 @@ export function MachineRecordsListPage() {
       filters.priority !== "all" ? "1" : "",
       filters.category !== "all" ? "1" : "",
       filters.shift !== "all" ? "1" : "",
+      filters.responsible ? "1" : "",
     ].filter(Boolean).length;
   }, [filters]);
 
@@ -181,12 +215,17 @@ export function MachineRecordsListPage() {
       const matchesShift =
         filters.shift === "all" ? true : record.shift === filters.shift;
 
+      const matchesResponsible = filters.responsible
+        ? record.responsible_id === filters.responsible
+        : true;
+
       return (
         matchesQuery &&
         matchesStatus &&
         matchesPriority &&
         matchesCategory &&
-        matchesShift
+        matchesShift &&
+        matchesResponsible
       );
     });
   }, [records, filters]);
@@ -234,7 +273,9 @@ export function MachineRecordsListPage() {
       priority: "all",
       category: "all",
       shift: "all",
+      responsible: "",
     });
+    setUserSearch("");
     setPage(1);
   }
 
@@ -593,6 +634,12 @@ export function MachineRecordsListPage() {
                     {CATEGORY_LABELS.get(filters.category) ?? filters.category}
                   </span>
                 )}
+                {filters.responsible && (
+                  <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
+                    Responsável:{" "}
+                    {selectedResponsible?.name ?? filters.responsible}
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={handleClearFilters}
@@ -617,11 +664,14 @@ export function MachineRecordsListPage() {
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Pendência
                   </th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Turno</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Categoria
                   </th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Responsável
+                  </th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Prioridade
                   </th>
@@ -637,7 +687,7 @@ export function MachineRecordsListPage() {
                 {loading && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="px-4 py-10 text-center text-slate-500"
                     >
                       Carregando pendências...
@@ -648,7 +698,7 @@ export function MachineRecordsListPage() {
                 {!loading && records.length === 0 && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="px-4 py-10 text-center text-slate-500"
                     >
                       Nenhuma pendência cadastrada.
@@ -659,7 +709,7 @@ export function MachineRecordsListPage() {
                 {!loading && records.length > 0 && totalItems === 0 && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="px-4 py-10 text-center text-slate-500"
                     >
                       Nenhuma pendência encontrada com os filtros atuais.
@@ -688,12 +738,15 @@ export function MachineRecordsListPage() {
                       <td className="px-4 py-4 text-slate-600">
                         {SHIFT_LABELS.get(record.shift) ?? record.shift}
                       </td>
+                      <td className="px-4 py-4">
+                        <StatusBadge status={record.status} />
+                      </td>
                       <td className="px-4 py-4 text-slate-600">
                         {CATEGORY_LABELS.get(record.category) ??
                           record.category}
                       </td>
-                      <td className="px-4 py-4">
-                        <StatusBadge status={record.status} />
+                      <td className="px-4 py-4 text-slate-600">
+                        {usersById.get(record.responsible_id)?.name ?? "-"}
                       </td>
                       <td className="px-4 py-4">
                         <PriorityBadge priority={record.priority} />
@@ -898,6 +951,96 @@ export function MachineRecordsListPage() {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-slate-800">
+                    Responsável
+                  </label>
+                  <div className="relative mt-1">
+                    <input
+                      value={userSearch}
+                      onChange={(event) => {
+                        setUserSearch(event.target.value);
+                        setIsUserListOpen(true);
+                        handleFilterChange("responsible", "");
+                      }}
+                      onFocus={() => setIsUserListOpen(true)}
+                      onBlur={() => {
+                        setTimeout(() => setIsUserListOpen(false), 150);
+                      }}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-9 text-sm text-slate-900"
+                      placeholder="Pesquisar por nome ou e-mail"
+                    />
+                    {userSearch && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserSearch("");
+                          handleFilterChange("responsible", "");
+                          setIsUserListOpen(false);
+                        }}
+                        className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                        aria-label="Limpar responsável"
+                        title="Limpar"
+                      >
+                        ×
+                      </button>
+                    )}
+                    {isUserListOpen && (
+                      <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
+                        <div className="max-h-56 overflow-auto">
+                          {loadingUsers ? (
+                            <div className="px-3 py-2 text-xs text-slate-500">
+                              Carregando usuários...
+                            </div>
+                          ) : users.filter((user) => {
+                              const query = userSearch.trim().toLowerCase();
+                              if (!query) return true;
+                              return (
+                                user.name.toLowerCase().includes(query) ||
+                                user.email.toLowerCase().includes(query)
+                              );
+                            }).length === 0 ? (
+                            <div className="px-3 py-2 text-xs text-slate-500">
+                              Nenhum usuário encontrado.
+                            </div>
+                          ) : (
+                            users
+                              .filter((user) => {
+                                const query = userSearch.trim().toLowerCase();
+                                if (!query) return true;
+                                return (
+                                  user.name.toLowerCase().includes(query) ||
+                                  user.email.toLowerCase().includes(query)
+                                );
+                              })
+                              .map((user) => (
+                                <button
+                                  key={user.id}
+                                  type="button"
+                                  onClick={() => {
+                                    handleFilterChange("responsible", user.id);
+                                    setUserSearch(
+                                      `${user.name} · ${user.email}`,
+                                    );
+                                    setIsUserListOpen(false);
+                                  }}
+                                  className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-50"
+                                >
+                                  <span className="font-medium">
+                                    {user.name}
+                                  </span>
+                                  <span className="text-xs text-slate-500">
+                                    {user.email}
+                                  </span>
+                                </button>
+                              ))
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
