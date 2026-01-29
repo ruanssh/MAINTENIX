@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
-  FiAlertCircle,
   FiFilter,
   FiPlus,
   FiDownload,
@@ -359,7 +358,8 @@ export function MachineRecordsListPage() {
               : record.priority === "LOW"
                 ? "Baixa"
                 : "Média";
-          const statusLabel = record.status === "DONE" ? "Resolvida" : "Pendente";
+          const statusLabel =
+            record.status === "DONE" ? "Resolvida" : "Pendente";
           return `
       <div class="record">
         <div class="column">
@@ -515,7 +515,8 @@ export function MachineRecordsListPage() {
                 )}
                 {filters.status !== "all" && (
                   <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
-                    Status: {filters.status === "PENDING" ? "Pendente" : "Resolvida"}
+                    Status:{" "}
+                    {filters.status === "PENDING" ? "Pendente" : "Resolvida"}
                   </span>
                 )}
                 {filters.priority !== "all" && (
@@ -544,10 +545,16 @@ export function MachineRecordsListPage() {
             <table className="w-full min-w-[900px] border-separate border-spacing-0 text-left text-sm">
               <thead>
                 <tr className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Pendência</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Pendência
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Prioridade</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Criada em</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Prioridade
+                  </th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Criada em
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 text-right">
                     Ações
                   </th>
@@ -556,7 +563,10 @@ export function MachineRecordsListPage() {
               <tbody>
                 {loading && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={5}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       Carregando pendências...
                     </td>
                   </tr>
@@ -564,7 +574,10 @@ export function MachineRecordsListPage() {
 
                 {!loading && records.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={5}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       Nenhuma pendência cadastrada.
                     </td>
                   </tr>
@@ -572,7 +585,10 @@ export function MachineRecordsListPage() {
 
                 {!loading && records.length > 0 && totalItems === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={5}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       Nenhuma pendência encontrada com os filtros atuais.
                     </td>
                   </tr>
@@ -585,16 +601,13 @@ export function MachineRecordsListPage() {
                       className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50/60"
                     >
                       <td className="px-4 py-4">
-                        <div className="flex items-start gap-3">
-                          <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600">
-                            <FiAlertCircle />
+                        <div className="flex items-center gap-3">
+                          <span className="inline-flex h-9 w-12 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                            {record.id}
                           </span>
                           <div className="min-w-0">
                             <div className="line-clamp-2 font-semibold text-slate-900">
                               {record.problem_description}
-                            </div>
-                            <div className="mt-1 text-xs text-slate-500">
-                              Início: {formatDateTime(record.started_at)}
                             </div>
                           </div>
                         </div>
@@ -660,7 +673,9 @@ export function MachineRecordsListPage() {
 
               <button
                 type="button"
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
               >
@@ -683,7 +698,9 @@ export function MachineRecordsListPage() {
           <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h2 className="text-base font-semibold text-slate-900">Filtros</h2>
+                <h2 className="text-base font-semibold text-slate-900">
+                  Filtros
+                </h2>
                 <p className="text-xs text-slate-500">
                   Ajuste os filtros para refinar a lista.
                 </p>
