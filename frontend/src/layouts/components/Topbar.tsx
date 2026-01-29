@@ -105,7 +105,7 @@ export function Topbar({ title, onToggleMenu }: Props) {
                   onClick={() => setIsMenuOpen(false)}
                   className="fixed inset-0 z-10"
                 />
-                <div className="absolute right-0 top-12 z-20 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                <div className="fixed left-4 right-4 top-16 z-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg md:absolute md:left-auto md:right-0 md:top-12 md:w-56">
                   <div className="px-4 py-3 text-xs text-slate-500">
                     {user?.email ?? ""}
                   </div>
