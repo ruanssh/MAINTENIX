@@ -141,3 +141,12 @@ html[data-theme="dark"] .border-blue-200 {
 html[data-theme="dark"] .text-blue-700 {
   color: #93c5fd;
 }
+
+html[data-theme="dark"] .btn-primary {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+html[data-theme="dark"] .btn-primary:hover {
+  background-color: #cbd5e1;
+}

@@ -684,11 +684,13 @@ export function MachineRecordsListPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex h-9 w-12 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      <span className="inline-flex h-9 w-12 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
                         {record.id}
                       </span>
-                      <div className="line-clamp-2 font-semibold text-slate-900">
-                        {record.problem_description}
+                      <div className="min-w-0 flex-1">
+                        <div className="line-clamp-2 font-semibold text-slate-900">
+                          {record.problem_description}
+                        </div>
                       </div>
                     </div>
 
@@ -816,10 +818,10 @@ export function MachineRecordsListPage() {
                     >
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="inline-flex h-9 w-12 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                          <span className="inline-flex h-9 w-12 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
                             {record.id}
                           </span>
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <div className="line-clamp-2 font-semibold text-slate-900">
                               {record.problem_description}
                             </div>
