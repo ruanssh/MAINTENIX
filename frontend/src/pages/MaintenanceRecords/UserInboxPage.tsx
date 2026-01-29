@@ -107,7 +107,7 @@ export function UserInboxPage() {
   const [isMachineListOpen, setIsMachineListOpen] = useState(false);
   const [filters, setFilters] = useState<FiltersState>({
     query: "",
-    status: "PENDING",
+    status: "all",
     priority: "all",
     category: "all",
     shift: "all",
@@ -238,7 +238,7 @@ export function UserInboxPage() {
   function handleClearFilters() {
     setFilters({
       query: "",
-      status: "PENDING",
+      status: "all",
       priority: "all",
       category: "all",
       shift: "all",
