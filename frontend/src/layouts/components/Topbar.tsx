@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { FiMoon, FiSun } from "react-icons/fi";
+import { FiMenu, FiMoon, FiSun } from "react-icons/fi";
 import { useAuth } from "../../auth/AuthContext";
 import maintenixLogo from "../../assets/maintenix.svg";
+import maintenixLogoDark from "../../assets/maintenix-dark.svg";
 
 type Props = {
   title?: string;
+  onToggleMenu?: () => void;
 };
 
-export function Topbar({ title }: Props) {
+export function Topbar({ title, onToggleMenu }: Props) {
   const { user, logout } = useAuth();
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
@@ -29,8 +31,27 @@ export function Topbar({ title }: Props) {
     <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
       <div className="flex h-14 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3">
-          <div className="md:hidden">
-            <img src={maintenixLogo} alt="MAINTENIX" className="h-16 w-auto" />
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              onClick={onToggleMenu}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100"
+              aria-label="Abrir menu"
+            >
+              <FiMenu />
+            </button>
+            <div className="flex items-center">
+              <img
+                src={maintenixLogo}
+                alt="MAINTENIX"
+                className="logo-light h-12 w-auto"
+              />
+              <img
+                src={maintenixLogoDark}
+                alt="MAINTENIX"
+                className="logo-dark h-12 w-auto"
+              />
+            </div>
           </div>
 
           {title ? (
