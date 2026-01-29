@@ -308,7 +308,8 @@ export function UserInboxPage() {
                 )}
                 {filters.status !== "all" && (
                   <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
-                    Status: {filters.status === "PENDING" ? "Pendente" : "Resolvida"}
+                    Status:{" "}
+                    {filters.status === "PENDING" ? "Pendente" : "Resolvida"}
                   </span>
                 )}
                 {filters.priority !== "all" && (
@@ -323,7 +324,8 @@ export function UserInboxPage() {
                 )}
                 {filters.category !== "all" && (
                   <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
-                    Categoria: {CATEGORY_LABELS.get(filters.category) ?? filters.category}
+                    Categoria:{" "}
+                    {CATEGORY_LABELS.get(filters.category) ?? filters.category}
                   </span>
                 )}
                 {filters.machine && (
@@ -428,8 +430,12 @@ export function UserInboxPage() {
             <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>
                 <tr className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Pendência</th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Máquina</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Pendência
+                  </th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Máquina
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden md:table-cell">
                     Turno
@@ -437,7 +443,9 @@ export function UserInboxPage() {
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden md:table-cell">
                     Categoria
                   </th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Prioridade</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Prioridade
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden lg:table-cell">
                     Criada em
                   </th>
@@ -511,7 +519,8 @@ export function UserInboxPage() {
                         {SHIFT_LABELS.get(record.shift) ?? record.shift}
                       </td>
                       <td className="px-4 py-4 text-slate-600 hidden md:table-cell">
-                        {CATEGORY_LABELS.get(record.category) ?? record.category}
+                        {CATEGORY_LABELS.get(record.category) ??
+                          record.category}
                       </td>
                       <td className="px-4 py-4">
                         <PriorityBadge priority={record.priority} />
@@ -528,9 +537,7 @@ export function UserInboxPage() {
                               : "bg-slate-900 text-white hover:bg-slate-800"
                           }`}
                         >
-                          {record.status === "DONE"
-                            ? "Ver resolução"
-                            : "Resolver"}
+                          {record.status === "DONE" ? "Visualizar" : "Resolver"}
                         </Link>
                       </td>
                     </tr>
@@ -575,7 +582,9 @@ export function UserInboxPage() {
 
               <button
                 type="button"
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
               >
@@ -678,9 +687,13 @@ export function UserInboxPage() {
                           ) : (
                             machines
                               .filter((machine) => {
-                                const query = machineSearch.trim().toLowerCase();
+                                const query = machineSearch
+                                  .trim()
+                                  .toLowerCase();
                                 if (!query) return true;
-                                return machine.name.toLowerCase().includes(query);
+                                return machine.name
+                                  .toLowerCase()
+                                  .includes(query);
                               })
                               .map((machine) => (
                                 <button

@@ -66,11 +66,6 @@ export function Topbar({ title, onToggleMenu }: Props) {
               Bem-vindo de volta
             </div>
           )}
-          {title && (
-            <div className="truncate text-sm font-semibold text-slate-900 md:hidden">
-              {title}
-            </div>
-          )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
