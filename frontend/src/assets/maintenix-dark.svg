@@ -1,0 +1,30 @@
+<svg viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
+    <path
+        d="M18 6a8 8 0 0 0 0 11l-6 6 3 3 6-6a8 8 0 0 0 11 0l-4-4a3 3 0 0 1-4-4l-4-4z"
+        fill="#22C55E"
+    />
+
+    <text
+        x="50"
+        y="27"
+        font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+        font-size="20"
+        font-weight="600"
+        fill="#E2E8F0"
+        letter-spacing="0.5"
+    >
+        MAINTE
+    </text>
+
+    <text
+        x="135"
+        y="27"
+        font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+        font-size="20"
+        font-weight="600"
+        fill="#22C55E"
+        letter-spacing="0.5"
+    >
+        NIX
+    </text>
+</svg>

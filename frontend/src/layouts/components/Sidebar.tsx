@@ -1,11 +1,14 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import maintenixLogo from "../../assets/maintenix.svg";
+import maintenixLogoDark from "../../assets/maintenix-dark.svg";
 
 function linkClassName({ isActive }: { isActive: boolean }) {
   return [
-    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition",
-    isActive ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100",
+    "sidebar-link flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition",
+    isActive
+      ? "sidebar-link-active bg-slate-900 text-white"
+      : "text-slate-700 hover:bg-slate-100",
   ].join(" ");
 }
 
@@ -19,7 +22,12 @@ export function Sidebar() {
         <img
           src={maintenixLogo}
           alt="MAINTENIX"
-          className="h-16 w-auto block translate-y-[1px]"
+          className="logo-light h-16 w-auto block translate-y-[1px]"
+        />
+        <img
+          src={maintenixLogoDark}
+          alt="MAINTENIX"
+          className="logo-dark h-16 w-auto block translate-y-[1px]"
         />
       </div>
 
