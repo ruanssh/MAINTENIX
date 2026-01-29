@@ -121,11 +121,19 @@ export class MachinesMaintenanceService {
       throw new BadRequestException('Registro já finalizado');
     }
 
+    const responsibleId = dto.responsible_id
+      ? this.parseBigInt(dto.responsible_id)
+      : undefined;
+    if (responsibleId) {
+      await this.ensureActiveUser(responsibleId);
+    }
+
     const data = {
       problem_description: dto.problem_description,
       priority: dto.priority,
       category: dto.category,
       shift: dto.shift,
+      responsible_id: responsibleId,
       started_at: dto.started_at ? new Date(dto.started_at) : undefined,
     };
 

@@ -28,6 +28,12 @@ export class UpdateMaintenanceRecordDto {
   @IsEnum(MaintenanceRecordShift)
   shift?: MaintenanceRecordShift;
 
+  @ApiProperty({ example: '12', required: false })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  responsible_id?: string;
+
   @ApiProperty({ example: '2026-01-27T10:30:00.000Z', required: false })
   @IsOptional()
   @IsDateString()

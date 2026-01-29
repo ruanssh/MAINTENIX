@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiX } from "react-icons/fi";
 
 import { AppLayout } from "../../layouts/AppLayout";
 import { ImageUpload } from "../../components/ImageUpload";
@@ -23,7 +23,10 @@ import type {
 } from "../../types/maintenance-records";
 import type { User } from "../../types/users";
 
-const CATEGORY_OPTIONS: Array<{ value: MaintenanceRecordCategory; label: string }> = [
+const CATEGORY_OPTIONS: Array<{
+  value: MaintenanceRecordCategory;
+  label: string;
+}> = [
   { value: "ELETRICA", label: "Elétrica" },
   { value: "MECANICA", label: "Mecânica" },
   { value: "PNEUMATICA", label: "Pneumática" },
@@ -168,9 +171,7 @@ export function CreateMaintenanceRecordPage() {
             Nova pendência
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            {loading
-              ? "Carregando máquina..."
-              : machine?.name ?? "Máquina"}
+            {loading ? "Carregando máquina..." : (machine?.name ?? "Máquina")}
           </p>
         </div>
 
@@ -282,12 +283,28 @@ export function CreateMaintenanceRecordPage() {
                   onBlur={() => {
                     setTimeout(() => setIsUserListOpen(false), 150);
                   }}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-9 text-sm text-slate-900"
                   placeholder="Pesquisar por nome ou e-mail"
                 />
+                {userSearch && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserSearch("");
+                      setValue("responsible_id", "", { shouldValidate: true });
+                      setIsUserListOpen(false);
+                    }}
+                    className="absolute right-2 top-5 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                    aria-label="Limpar responsável"
+                    title="Limpar"
+                  >
+                    <FiX className="h-4 w-4" />
+                  </button>
+                )}
                 {selectedResponsible && !isUserListOpen && (
                   <div className="mt-2 text-xs text-slate-500">
-                    Selecionado: {selectedResponsible.name} · {selectedResponsible.email}
+                    Selecionado: {selectedResponsible.name} ·{" "}
+                    {selectedResponsible.email}
                   </div>
                 )}
                 {isUserListOpen && (
