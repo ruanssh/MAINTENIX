@@ -21,6 +21,7 @@ export type MaintenanceRecord = {
   machine_id: Id;
   created_by: Id;
   finished_by: Id | null;
+  responsible_id: Id;
   status: MaintenanceRecordStatus;
   priority: MaintenanceRecordPriority;
   category: MaintenanceRecordCategory;
@@ -38,6 +39,7 @@ export type CreateMaintenanceRecordRequest = {
   priority?: MaintenanceRecordPriority;
   category: MaintenanceRecordCategory;
   shift: MaintenanceRecordShift;
+  responsible_id: Id;
   started_at?: string;
 };
 

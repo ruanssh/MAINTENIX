@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export enum MaintenanceRecordPriority {
   LOW = 'LOW',
@@ -45,6 +51,11 @@ export class CreateMaintenanceRecordDto {
   @ApiProperty({ enum: MaintenanceRecordShift })
   @IsEnum(MaintenanceRecordShift)
   shift!: MaintenanceRecordShift;
+
+  @ApiProperty({ example: '12' })
+  @IsString()
+  @MinLength(1)
+  responsible_id!: string;
 
   @ApiProperty({ example: '2026-01-27T10:30:00.000Z', required: false })
   @IsOptional()

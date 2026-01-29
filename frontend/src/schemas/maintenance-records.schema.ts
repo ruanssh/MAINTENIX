@@ -33,6 +33,10 @@ export const createMaintenanceRecordSchema = z.object({
       required_error: "Selecione o turno.",
     }),
   ),
+  responsible_id: z
+    .string()
+    .min(1, "Selecione o responsável.")
+    .refine((value) => /\d+/.test(value), "Responsável inválido."),
 });
 
 export const finishMaintenanceRecordSchema = z.object({

@@ -40,11 +40,14 @@ export class MachinesMaintenanceService {
     createdBy: bigint,
   ) {
     await this.ensureMachine(machineId);
+    const responsibleId = this.parseBigInt(dto.responsible_id);
+    await this.ensureActiveUser(responsibleId);
 
     return this.prisma.maintenance_records.create({
       data: {
         machine_id: machineId,
         created_by: createdBy,
+        responsible_id: responsibleId,
         status: 'PENDING',
         priority: dto.priority ?? MaintenanceRecordPriority.MEDIUM,
         category: dto.category,
@@ -261,12 +264,29 @@ export class MachinesMaintenanceService {
     if (!exists) throw new NotFoundException('Registro não encontrado');
   }
 
+  private async ensureActiveUser(userId: bigint) {
+    const exists = await this.prisma.users.findFirst({
+      where: { id: userId, active: true },
+      select: { id: true },
+    });
+    if (!exists) throw new NotFoundException('Responsável não encontrado');
+  }
+
+  private parseBigInt(value: string): bigint {
+    try {
+      return BigInt(value);
+    } catch {
+      throw new BadRequestException('Responsável inválido');
+    }
+  }
+
   private recordSelect() {
     return {
       id: true,
       machine_id: true,
       created_by: true,
       finished_by: true,
+      responsible_id: true,
       status: true,
       priority: true,
       category: true,

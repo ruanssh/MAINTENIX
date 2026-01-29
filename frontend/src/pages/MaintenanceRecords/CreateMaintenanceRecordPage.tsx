@@ -9,6 +9,7 @@ import { AppLayout } from "../../layouts/AppLayout";
 import { ImageUpload } from "../../components/ImageUpload";
 import { MachinesService } from "../../services/machines.service";
 import { MaintenanceRecordsService } from "../../services/maintenance-records.service";
+import { UsersService } from "../../services/users.service";
 import { parseApiError } from "../../api/errors";
 import {
   createMaintenanceRecordSchema,
@@ -20,6 +21,7 @@ import type {
   MaintenanceRecordCategory,
   MaintenanceRecordShift,
 } from "../../types/maintenance-records";
+import type { User } from "../../types/users";
 
 const CATEGORY_OPTIONS: Array<{ value: MaintenanceRecordCategory; label: string }> = [
   { value: "ELETRICA", label: "Elétrica" },
@@ -48,6 +50,7 @@ function normalizePayload(
     problem_description: values.problem_description.trim(),
     category: values.category,
     shift: values.shift,
+    responsible_id: values.responsible_id,
   };
 
   if (values.priority) payload.priority = values.priority;
@@ -61,6 +64,9 @@ export function CreateMaintenanceRecordPage() {
   const [machine, setMachine] = useState<Machine | null>(null);
   const [loading, setLoading] = useState(true);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [userSearch, setUserSearch] = useState("");
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   const defaultValues = useMemo<CreateMaintenanceRecordFormValues>(
     () => ({
@@ -68,6 +74,7 @@ export function CreateMaintenanceRecordPage() {
       priority: "",
       category: "",
       shift: "",
+      responsible_id: "",
     }),
     [],
   );
@@ -75,11 +82,21 @@ export function CreateMaintenanceRecordPage() {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateMaintenanceRecordFormValues>({
     resolver: zodResolver(createMaintenanceRecordSchema),
     defaultValues,
   });
+
+  const [isUserListOpen, setIsUserListOpen] = useState(false);
+  const selectedResponsibleId = watch("responsible_id");
+
+  const selectedResponsible = useMemo(() => {
+    if (!selectedResponsibleId) return null;
+    return users.find((user) => user.id === selectedResponsibleId) ?? null;
+  }, [users, selectedResponsibleId]);
 
   useEffect(() => {
     async function loadMachine() {
@@ -98,6 +115,22 @@ export function CreateMaintenanceRecordPage() {
 
     void loadMachine();
   }, [id, navigate]);
+
+  useEffect(() => {
+    async function loadUsers() {
+      setLoadingUsers(true);
+      try {
+        const data = await UsersService.list();
+        setUsers(data.filter((user) => user.active));
+      } catch (e) {
+        toast.error(parseApiError(e));
+      } finally {
+        setLoadingUsers(false);
+      }
+    }
+
+    void loadUsers();
+  }, []);
 
   async function onSubmit(values: CreateMaintenanceRecordFormValues) {
     if (!id) return;
@@ -229,6 +262,89 @@ export function CreateMaintenanceRecordPage() {
               {errors.category && (
                 <p className="mt-1 text-xs text-red-600">
                   {errors.category.message}
+                </p>
+              )}
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium text-slate-800">
+                Responsável
+              </label>
+              <input type="hidden" {...register("responsible_id")} />
+              <div className="relative mt-1">
+                <input
+                  value={userSearch}
+                  onChange={(event) => {
+                    setUserSearch(event.target.value);
+                    setIsUserListOpen(true);
+                    setValue("responsible_id", "", { shouldValidate: true });
+                  }}
+                  onFocus={() => setIsUserListOpen(true)}
+                  onBlur={() => {
+                    setTimeout(() => setIsUserListOpen(false), 150);
+                  }}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                  placeholder="Pesquisar por nome ou e-mail"
+                />
+                {selectedResponsible && !isUserListOpen && (
+                  <div className="mt-2 text-xs text-slate-500">
+                    Selecionado: {selectedResponsible.name} · {selectedResponsible.email}
+                  </div>
+                )}
+                {isUserListOpen && (
+                  <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
+                    <div className="max-h-56 overflow-auto">
+                      {loadingUsers ? (
+                        <div className="px-3 py-2 text-xs text-slate-500">
+                          Carregando usuários...
+                        </div>
+                      ) : users.filter((user) => {
+                          const query = userSearch.trim().toLowerCase();
+                          if (!query) return true;
+                          return (
+                            user.name.toLowerCase().includes(query) ||
+                            user.email.toLowerCase().includes(query)
+                          );
+                        }).length === 0 ? (
+                        <div className="px-3 py-2 text-xs text-slate-500">
+                          Nenhum usuário encontrado.
+                        </div>
+                      ) : (
+                        users
+                          .filter((user) => {
+                            const query = userSearch.trim().toLowerCase();
+                            if (!query) return true;
+                            return (
+                              user.name.toLowerCase().includes(query) ||
+                              user.email.toLowerCase().includes(query)
+                            );
+                          })
+                          .map((user) => (
+                            <button
+                              key={user.id}
+                              type="button"
+                              onClick={() => {
+                                setValue("responsible_id", user.id, {
+                                  shouldValidate: true,
+                                });
+                                setUserSearch(`${user.name} · ${user.email}`);
+                                setIsUserListOpen(false);
+                              }}
+                              className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-50"
+                            >
+                              <span className="font-medium">{user.name}</span>
+                              <span className="text-xs text-slate-500">
+                                {user.email}
+                              </span>
+                            </button>
+                          ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              {errors.responsible_id && (
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.responsible_id.message}
                 </p>
               )}
             </div>

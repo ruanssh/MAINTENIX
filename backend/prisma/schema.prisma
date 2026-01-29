@@ -65,46 +65,50 @@ model maintenance_photos {
 }
 
 model maintenance_records {
-  id                                           BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
-  machine_id                                   BigInt                       @db.UnsignedBigInt
-  created_by                                   BigInt                       @db.UnsignedBigInt
-  finished_by                                  BigInt?                      @db.UnsignedBigInt
-  status                                       maintenance_records_status   @default(PENDING)
-  priority                                     maintenance_records_priority @default(MEDIUM)
-  problem_description                          String                       @db.Text
-  solution_description                         String?                      @db.Text
-  started_at                                   DateTime?                    @db.DateTime(0)
-  finished_at                                  DateTime?                    @db.DateTime(0)
-  created_at                                   DateTime                     @default(now()) @db.Timestamp(0)
-  updated_at                                   DateTime                     @default(now()) @db.Timestamp(0)
-  category                                     maintenance_records_category @default(MECANICA)
-  shift                                        maintenance_records_shift    @default(PRIMEIRO)
-  maintenance_events                           maintenance_events[]
-  maintenance_photos                           maintenance_photos[]
-  users_maintenance_records_created_byTousers  users                        @relation("maintenance_records_created_byTousers", fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_mr_created_by")
-  users_maintenance_records_finished_byTousers users?                       @relation("maintenance_records_finished_byTousers", fields: [finished_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_mr_finished_by")
-  machines                                     machines                     @relation(fields: [machine_id], references: [id], onUpdate: Restrict, map: "fk_mr_machine")
+  id                                              BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
+  machine_id                                      BigInt                       @db.UnsignedBigInt
+  created_by                                      BigInt                       @db.UnsignedBigInt
+  finished_by                                     BigInt?                      @db.UnsignedBigInt
+  status                                          maintenance_records_status   @default(PENDING)
+  priority                                        maintenance_records_priority @default(MEDIUM)
+  problem_description                             String                       @db.Text
+  solution_description                            String?                      @db.Text
+  started_at                                      DateTime?                    @db.DateTime(0)
+  finished_at                                     DateTime?                    @db.DateTime(0)
+  created_at                                      DateTime                     @default(now()) @db.Timestamp(0)
+  updated_at                                      DateTime                     @default(now()) @db.Timestamp(0)
+  category                                        maintenance_records_category @default(MECANICA)
+  shift                                           maintenance_records_shift    @default(PRIMEIRO)
+  responsible_id                                  BigInt                       @db.UnsignedBigInt
+  maintenance_events                              maintenance_events[]
+  maintenance_photos                              maintenance_photos[]
+  users_maintenance_records_created_byTousers     users                        @relation("maintenance_records_created_byTousers", fields: [created_by], references: [id], onUpdate: Restrict, map: "fk_mr_created_by")
+  users_maintenance_records_finished_byTousers    users?                       @relation("maintenance_records_finished_byTousers", fields: [finished_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_mr_finished_by")
+  machines                                        machines                     @relation(fields: [machine_id], references: [id], onUpdate: Restrict, map: "fk_mr_machine")
+  users_maintenance_records_responsible_idTousers users                        @relation("maintenance_records_responsible_idTousers", fields: [responsible_id], references: [id], onUpdate: Restrict, map: "maintenance_records_users_FK")
 
   @@index([created_by], map: "fk_mr_created_by")
   @@index([finished_by], map: "fk_mr_finished_by")
   @@index([machine_id], map: "idx_mr_machine")
   @@index([status], map: "idx_mr_status")
+  @@index([responsible_id], map: "maintenance_records_users_FK")
 }
 
 model users {
-  id                                                         BigInt                @id @default(autoincrement()) @db.UnsignedBigInt
-  name                                                       String                @db.VarChar(150)
-  email                                                      String                @unique(map: "email") @db.VarChar(150)
-  password_hash                                              String                @db.VarChar(255)
-  active                                                     Boolean               @default(true)
-  created_at                                                 DateTime              @default(now()) @db.Timestamp(0)
-  updated_at                                                 DateTime              @default(now()) @db.Timestamp(0)
-  role                                                       Int
-  machines                                                   machines[]
-  maintenance_events                                         maintenance_events[]
-  maintenance_photos                                         maintenance_photos[]
-  maintenance_records_maintenance_records_created_byTousers  maintenance_records[] @relation("maintenance_records_created_byTousers")
-  maintenance_records_maintenance_records_finished_byTousers maintenance_records[] @relation("maintenance_records_finished_byTousers")
+  id                                                            BigInt                @id @default(autoincrement()) @db.UnsignedBigInt
+  name                                                          String                @db.VarChar(150)
+  email                                                         String                @unique(map: "email") @db.VarChar(150)
+  password_hash                                                 String                @db.VarChar(255)
+  active                                                        Boolean               @default(true)
+  created_at                                                    DateTime              @default(now()) @db.Timestamp(0)
+  updated_at                                                    DateTime              @default(now()) @db.Timestamp(0)
+  role                                                          Int
+  machines                                                      machines[]
+  maintenance_events                                            maintenance_events[]
+  maintenance_photos                                            maintenance_photos[]
+  maintenance_records_maintenance_records_created_byTousers     maintenance_records[] @relation("maintenance_records_created_byTousers")
+  maintenance_records_maintenance_records_finished_byTousers    maintenance_records[] @relation("maintenance_records_finished_byTousers")
+  maintenance_records_maintenance_records_responsible_idTousers maintenance_records[] @relation("maintenance_records_responsible_idTousers")
 }
 
 enum maintenance_photos_type {
