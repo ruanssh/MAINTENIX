@@ -668,12 +668,12 @@ export function MachineRecordsListPage() {
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Categoria
                   </th>
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
-                    Responsável
-                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Prioridade
+                  </th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Responsável
                   </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">
                     Criada em
@@ -738,18 +738,18 @@ export function MachineRecordsListPage() {
                       <td className="px-4 py-4 text-slate-600">
                         {SHIFT_LABELS.get(record.shift) ?? record.shift}
                       </td>
-                      <td className="px-4 py-4">
-                        <StatusBadge status={record.status} />
-                      </td>
                       <td className="px-4 py-4 text-slate-600">
                         {CATEGORY_LABELS.get(record.category) ??
                           record.category}
                       </td>
-                      <td className="px-4 py-4 text-slate-600">
-                        {usersById.get(record.responsible_id)?.name ?? "-"}
+                      <td className="px-4 py-4">
+                        <StatusBadge status={record.status} />
                       </td>
                       <td className="px-4 py-4">
                         <PriorityBadge priority={record.priority} />
+                      </td>
+                      <td className="px-4 py-4 text-slate-600">
+                        {usersById.get(record.responsible_id)?.name ?? "-"}
                       </td>
                       <td className="px-4 py-4 text-slate-600">
                         {formatDateTime(record.created_at)}
