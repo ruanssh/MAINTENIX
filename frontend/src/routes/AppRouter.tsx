@@ -12,6 +12,7 @@ import { CreateMaintenanceRecordPage } from "../pages/MaintenanceRecords/CreateM
 import { FinishMaintenanceRecordPage } from "../pages/MaintenanceRecords/FinishMaintenanceRecordPage";
 import { EditMaintenanceRecordPage } from "../pages/MaintenanceRecords/EditMaintenanceRecordPage";
 import { UserInboxPage } from "../pages/MaintenanceRecords/UserInboxPage";
+import { AccessDeniedPage } from "../pages/Access/AccessDeniedPage";
 import { ProtectedRoute } from "../auth/ProtectedRoute";
 
 export function AppRouter() {
@@ -38,9 +39,18 @@ export function AppRouter() {
       />
 
       <Route
-        path="/machines"
+        path="/access-denied"
         element={
           <ProtectedRoute>
+            <AccessDeniedPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/machines"
+        element={
+          <ProtectedRoute requireAdmin>
             <MachinesListPage />
           </ProtectedRoute>
         }
@@ -49,7 +59,7 @@ export function AppRouter() {
       <Route
         path="/machines/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <CreateMachinePage />
           </ProtectedRoute>
         }
@@ -58,7 +68,7 @@ export function AppRouter() {
       <Route
         path="/machines/:id/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <EditMachinePage />
           </ProtectedRoute>
         }
@@ -67,7 +77,7 @@ export function AppRouter() {
       <Route
         path="/machines/:id/maintenance-records"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <MachineRecordsListPage />
           </ProtectedRoute>
         }
@@ -76,7 +86,7 @@ export function AppRouter() {
       <Route
         path="/machines/:id/maintenance-records/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <CreateMaintenanceRecordPage />
           </ProtectedRoute>
         }
@@ -94,7 +104,7 @@ export function AppRouter() {
       <Route
         path="/machines/:id/maintenance-records/:recordId/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <EditMaintenanceRecordPage />
           </ProtectedRoute>
         }
@@ -104,7 +114,7 @@ export function AppRouter() {
       <Route
         path="/users"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <UsersListPage />
           </ProtectedRoute>
         }
@@ -113,7 +123,7 @@ export function AppRouter() {
       <Route
         path="/users/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <CreateUserPage />
           </ProtectedRoute>
         }
@@ -122,7 +132,7 @@ export function AppRouter() {
       <Route
         path="/users/:id/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <EditUserPage />
           </ProtectedRoute>
         }

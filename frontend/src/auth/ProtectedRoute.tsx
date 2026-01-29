@@ -2,8 +2,13 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import type { JSX } from "react";
 
-export function ProtectedRoute({ children }: { children: JSX.Element }) {
-  const { isAuthenticated, loading } = useAuth();
+type Props = {
+  children: JSX.Element;
+  requireAdmin?: boolean;
+};
+
+export function ProtectedRoute({ children, requireAdmin }: Props) {
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -12,6 +17,10 @@ export function ProtectedRoute({ children }: { children: JSX.Element }) {
   }
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  if (requireAdmin && user?.role !== 1) {
+    return <Navigate to="/access-denied" replace />;
+  }
 
   return children;
 }
