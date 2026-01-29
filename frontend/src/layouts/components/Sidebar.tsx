@@ -31,6 +31,10 @@ export function Sidebar() {
         <NavLink to="/machines" className={linkClassName}>
           Máquinas
         </NavLink>
+
+        <NavLink to="/internal/users/new" className={linkClassName}>
+          Usuários
+        </NavLink>
       </nav>
 
       <div className="border-t border-slate-200 p-3 text-xs text-slate-500">

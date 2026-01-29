@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
+import { AppLayout } from "../../layouts/AppLayout";
 import { UsersService } from "../../services/users.service";
 import { parseApiError } from "../../api/errors";
 import {
@@ -37,12 +38,14 @@ export function CreateUserPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 text-slate-900 p-4">
+    <AppLayout title="Usuários">
       <div className="mx-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6">
-          <h1 className="text-xl font-semibold tracking-tight">Criar usuário</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+            Criar usuário
+          </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Rota oculta: /internal/users/new
+            Preencha os dados para adicionar um novo usuário.
           </p>
         </div>
 
@@ -50,7 +53,7 @@ export function CreateUserPage() {
           <div>
             <label className="text-sm font-medium text-slate-800">Nome</label>
             <input
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400"
               placeholder="João Silva"
               {...register("name")}
             />
@@ -62,7 +65,7 @@ export function CreateUserPage() {
           <div>
             <label className="text-sm font-medium text-slate-800">E-mail</label>
             <input
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400"
               placeholder="usuario@empresa.com"
               autoComplete="email"
               {...register("email")}
@@ -75,12 +78,10 @@ export function CreateUserPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-800">
-              Senha
-            </label>
+            <label className="text-sm font-medium text-slate-800">Senha</label>
             <input
               type="password"
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400"
               placeholder="••••••••"
               autoComplete="new-password"
               {...register("password")}
@@ -101,6 +102,6 @@ export function CreateUserPage() {
           </button>
         </form>
       </div>
-    </div>
+    </AppLayout>
   );
 }

@@ -31,7 +31,10 @@ type FiltersState = {
   shift: "all" | MaintenanceRecordShift;
 };
 
-const CATEGORY_OPTIONS: Array<{ value: MaintenanceRecordCategory; label: string }> = [
+const CATEGORY_OPTIONS: Array<{
+  value: MaintenanceRecordCategory;
+  label: string;
+}> = [
   { value: "ELETRICA", label: "Elétrica" },
   { value: "MECANICA", label: "Mecânica" },
   { value: "PNEUMATICA", label: "Pneumática" },
@@ -586,7 +589,8 @@ export function MachineRecordsListPage() {
                 )}
                 {filters.category !== "all" && (
                   <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
-                    Categoria: {CATEGORY_LABELS.get(filters.category) ?? filters.category}
+                    Categoria:{" "}
+                    {CATEGORY_LABELS.get(filters.category) ?? filters.category}
                   </span>
                 )}
                 <button
@@ -632,33 +636,33 @@ export function MachineRecordsListPage() {
               <tbody>
                 {loading && (
                   <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-10 text-center text-slate-500"
-                      >
-                        Carregando pendências...
+                    <td
+                      colSpan={7}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
+                      Carregando pendências...
                     </td>
                   </tr>
                 )}
 
                 {!loading && records.length === 0 && (
                   <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-10 text-center text-slate-500"
-                      >
-                        Nenhuma pendência cadastrada.
+                    <td
+                      colSpan={7}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
+                      Nenhuma pendência cadastrada.
                     </td>
                   </tr>
                 )}
 
                 {!loading && records.length > 0 && totalItems === 0 && (
                   <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-10 text-center text-slate-500"
-                      >
-                        Nenhuma pendência encontrada com os filtros atuais.
+                    <td
+                      colSpan={7}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
+                      Nenhuma pendência encontrada com os filtros atuais.
                     </td>
                   </tr>
                 )}
@@ -681,14 +685,15 @@ export function MachineRecordsListPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <StatusBadge status={record.status} />
-                      </td>
                       <td className="px-4 py-4 text-slate-600">
                         {SHIFT_LABELS.get(record.shift) ?? record.shift}
                       </td>
                       <td className="px-4 py-4 text-slate-600">
-                        {CATEGORY_LABELS.get(record.category) ?? record.category}
+                        {CATEGORY_LABELS.get(record.category) ??
+                          record.category}
+                      </td>
+                      <td className="px-4 py-4">
+                        <StatusBadge status={record.status} />
                       </td>
                       <td className="px-4 py-4">
                         <PriorityBadge priority={record.priority} />
