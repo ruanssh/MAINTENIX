@@ -25,7 +25,15 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = sessionStorage.getItem("auth:user");
+    if (!stored) return null;
+    try {
+      return JSON.parse(stored) as User;
+    } catch {
+      return null;
+    }
+  });
 
   const isAuthenticated = Boolean(getToken());
 
@@ -33,10 +41,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = getToken();
     if (!token) {
       setUser(null);
+      sessionStorage.removeItem("auth:user");
       return;
     }
     const me = await UsersService.me();
     setUser(me);
+    sessionStorage.setItem("auth:user", JSON.stringify(me));
   }, []);
 
   const login = useCallback(
@@ -51,6 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(() => {
     clearToken();
     setUser(null);
+    sessionStorage.removeItem("auth:user");
   }, []);
 
   useEffect(() => {

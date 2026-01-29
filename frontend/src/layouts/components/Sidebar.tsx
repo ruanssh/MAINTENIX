@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 import maintenixLogo from "../../assets/maintenix.svg";
 
 function linkClassName({ isActive }: { isActive: boolean }) {
@@ -9,6 +10,9 @@ function linkClassName({ isActive }: { isActive: boolean }) {
 }
 
 export function Sidebar() {
+  const { user, loading } = useAuth();
+  const isAdmin = user?.role === 1;
+
   return (
     <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
       <div className="h-14 px-4 border-b border-slate-200 flex items-center">
@@ -28,13 +32,17 @@ export function Sidebar() {
           Início
         </NavLink>
 
-        <NavLink to="/machines" className={linkClassName}>
-          Máquinas
-        </NavLink>
+        {!loading && isAdmin && (
+          <>
+            <NavLink to="/machines" className={linkClassName}>
+              Máquinas
+            </NavLink>
 
-        <NavLink to="/users" className={linkClassName}>
-          Usuários
-        </NavLink>
+            <NavLink to="/users" className={linkClassName}>
+              Usuários
+            </NavLink>
+          </>
+        )}
       </nav>
 
       <div className="border-t border-slate-200 p-3 text-xs text-slate-500">
