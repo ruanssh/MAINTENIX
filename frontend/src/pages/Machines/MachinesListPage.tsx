@@ -298,7 +298,97 @@ export function MachinesListPage() {
         )}
 
         {/* Table */}
-        <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
+        <div className="mt-6 grid gap-4 md:hidden">
+          {loading && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Carregando máquinas...
+            </div>
+          )}
+
+          {!loading && machines.length === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Nenhuma máquina cadastrada.
+            </div>
+          )}
+
+          {!loading && machines.length > 0 && totalItems === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Nenhuma máquina encontrada com os filtros atuais.
+            </div>
+          )}
+
+          {!loading &&
+            pagedMachines.map((machine) => (
+              <div
+                key={machine.id}
+                className="rounded-xl border border-slate-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-9 w-12 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                        {machine.id}
+                      </span>
+                      <div className="truncate font-semibold text-slate-900">
+                        {machine.name}
+                      </div>
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                      <span className="inline-flex items-center gap-1">
+                        <FiLayers className="text-slate-400" />
+                        {machine.line ?? "Sem linha"}
+                      </span>
+                      <span className="text-slate-300">•</span>
+                      <span className="inline-flex items-center gap-1">
+                        <FiMapPin className="text-slate-400" />
+                        {machine.location ?? "Sem local"}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                      <div>
+                        <span className="text-slate-400">Modelo</span>
+                        <div className="font-mono text-xs">
+                          {machine.model ?? "-"}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Serial</span>
+                        <div className="font-mono text-xs">
+                          {machine.serial_number ?? "-"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <Link
+                      to={`/machines/${machine.id}/maintenance-records`}
+                      className="inline-flex items-center justify-center rounded-md border border-slate-200 px-2 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      <FiClipboard />
+                    </Link>
+                    <Link
+                      to={`/machines/${machine.id}/edit`}
+                      className="inline-flex items-center justify-center rounded-md border border-slate-200 px-2 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      <FiEdit2 />
+                    </Link>
+                    <IconButton
+                      title="Excluir"
+                      variant="danger"
+                      onClick={() => handleDelete(machine)}
+                    >
+                      <FiTrash2 />
+                    </IconButton>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        <div className="mt-6 hidden overflow-hidden rounded-xl border border-slate-200 md:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>

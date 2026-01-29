@@ -219,7 +219,72 @@ export function UsersListPage() {
           </div>
         )}
 
-        <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
+        <div className="mt-6 grid gap-4 md:hidden">
+          {loading && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Carregando usuários...
+            </div>
+          )}
+
+          {!loading && users.length === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Nenhum usuário cadastrado.
+            </div>
+          )}
+
+          {!loading && users.length > 0 && totalItems === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Nenhum usuário encontrado com os filtros atuais.
+            </div>
+          )}
+
+          {!loading &&
+            pagedUsers.map((user) => (
+              <div
+                key={user.id}
+                className="rounded-xl border border-slate-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600">
+                        <FiUser />
+                      </span>
+                      <div>
+                        <div className="truncate font-semibold text-slate-900">
+                          {user.name}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {user.email}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                      <span>Perfil: {ROLE_LABELS.get(user.role) ?? user.role}</span>
+                      <span className="text-slate-300">•</span>
+                      <span>
+                        Status: {user.active ? "Ativo" : "Inativo"}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 text-xs text-slate-500">
+                      Criado em: {formatDateTime(user.created_at)}
+                    </div>
+                  </div>
+
+                  <Link
+                    to={`/users/${user.id}/edit`}
+                    className="inline-flex items-center justify-center rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Editar
+                  </Link>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        <div className="mt-6 hidden overflow-hidden rounded-xl border border-slate-200 md:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>

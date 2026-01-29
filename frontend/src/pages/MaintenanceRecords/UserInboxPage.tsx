@@ -347,7 +347,83 @@ export function UserInboxPage() {
           </div>
         )}
 
-        <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
+        <div className="mt-6 grid gap-4 md:hidden">
+          {loading && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Carregando pendências...
+            </div>
+          )}
+
+          {!loading && records.length === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Nenhuma pendência atribuída.
+            </div>
+          )}
+
+          {!loading && records.length > 0 && totalItems === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+              Nenhuma pendência encontrada com os filtros atuais.
+            </div>
+          )}
+
+          {!loading &&
+            pagedRecords.map((record) => (
+              <div
+                key={record.id}
+                className="rounded-xl border border-slate-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-9 w-12 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                        {record.id}
+                      </span>
+                      <div className="line-clamp-2 font-semibold text-slate-900">
+                        {record.problem_description}
+                      </div>
+                    </div>
+
+                    <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                      <FiInbox className="text-slate-400" />
+                      {record.machines?.name ?? "-"}
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <StatusBadge status={record.status} />
+                      <PriorityBadge priority={record.priority} />
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                      <span>
+                        Turno: {SHIFT_LABELS.get(record.shift) ?? record.shift}
+                      </span>
+                      <span className="text-slate-300">•</span>
+                      <span>
+                        Categoria:{" "}
+                        {CATEGORY_LABELS.get(record.category) ??
+                          record.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <Link
+                      to={`/machines/${record.machine_id}/maintenance-records/${record.id}`}
+                      className={`inline-flex items-center justify-center rounded-md px-3 py-2 text-xs font-semibold ${
+                        record.status === "DONE"
+                          ? "border border-slate-200 text-slate-700 hover:bg-slate-50"
+                          : "bg-slate-900 text-white hover:bg-slate-800"
+                      }`}
+                    >
+                      {record.status === "DONE" ? "Ver" : "Resolver"}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        <div className="mt-6 hidden overflow-hidden rounded-xl border border-slate-200 md:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>
