@@ -1,8 +1,10 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
   CreateMaintenanceRecordDto,
@@ -20,6 +22,7 @@ import {
   MaintenancePhotoType,
 } from './dto/create-maintenance-photo.dto';
 import { MinioService } from '../../storage/minio.service';
+import { MailService } from '../mail/mail.service';
 type UploadedFile = {
   originalname: string;
   mimetype: string;
@@ -29,9 +32,13 @@ type UploadedFile = {
 
 @Injectable()
 export class MachinesMaintenanceService {
+  private readonly logger = new Logger(MachinesMaintenanceService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly storage: MinioService,
+    private readonly mail: MailService,
+    private readonly config: ConfigService,
   ) {}
 
   async createRecord(
@@ -43,7 +50,7 @@ export class MachinesMaintenanceService {
     const responsibleId = this.parseBigInt(dto.responsible_id);
     await this.ensureActiveUser(responsibleId);
 
-    return this.prisma.maintenance_records.create({
+    const record = await this.prisma.maintenance_records.create({
       data: {
         machine_id: machineId,
         created_by: createdBy,
@@ -57,6 +64,10 @@ export class MachinesMaintenanceService {
       },
       select: this.recordSelect(),
     });
+
+    await this.notifyResponsibleAssignment(record.id);
+
+    return record;
   }
 
   async listRecords(machineId: bigint, query: ListMaintenanceRecordsQueryDto) {
@@ -142,7 +153,10 @@ export class MachinesMaintenanceService {
       throw new BadRequestException('Nenhuma informação para atualizar');
     }
 
-    return this.prisma.maintenance_records.update({
+    const shouldNotifyResponsible =
+      responsibleId !== undefined && responsibleId !== existing.responsible_id;
+
+    const record = await this.prisma.maintenance_records.update({
       where: { id: recordId },
       data: {
         ...data,
@@ -150,6 +164,12 @@ export class MachinesMaintenanceService {
       },
       select: this.recordSelect(),
     });
+
+    if (shouldNotifyResponsible) {
+      await this.notifyResponsibleAssignment(recordId);
+    }
+
+    return record;
   }
 
   async createEvent(
@@ -336,5 +356,61 @@ export class MachinesMaintenanceService {
       created_by: true,
       created_at: true,
     };
+  }
+
+  private async notifyResponsibleAssignment(recordId: bigint) {
+    try {
+      const record = await this.prisma.maintenance_records.findUnique({
+        where: { id: recordId },
+        select: {
+          id: true,
+          machine_id: true,
+          problem_description: true,
+          priority: true,
+          category: true,
+          shift: true,
+          machines: { select: { name: true } },
+          users_maintenance_records_responsible_idTousers: {
+            select: { name: true, email: true },
+          },
+        },
+      });
+
+      if (!record) return;
+
+      const responsible =
+        record.users_maintenance_records_responsible_idTousers;
+      if (!responsible?.email) return;
+
+      const actionUrl = this.buildRecordUrl(record.machine_id, record.id);
+
+      await this.mail.sendMaintenanceAssignmentEmail({
+        to: responsible.email,
+        name: responsible.name,
+        machineName: record.machines?.name ?? 'Maquina',
+        priority: this.formatLabel(record.priority),
+        category: this.formatLabel(record.category),
+        shift: this.formatLabel(record.shift),
+        problemDescription: record.problem_description,
+        actionUrl,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Falha ao notificar responsavel no registro ${recordId}`,
+        error instanceof Error ? error.message : undefined,
+      );
+    }
+  }
+
+  private buildRecordUrl(machineId: bigint, recordId: bigint) {
+    const baseUrl =
+      this.config.get<string>('MAIL_APP_URL') ?? 'http://localhost:5173';
+    return `${baseUrl}/machines/${machineId.toString()}/maintenance-records/${recordId.toString()}`;
+  }
+
+  private formatLabel(value: string | null | undefined) {
+    if (!value) return '-';
+    const normalized = value.toLowerCase().replace(/_/g, ' ');
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   }
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>{{appName}} - Nova manutencao</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f6f7fb;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        color: #0f172a;
+      }
+      .container {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+      }
+      .card {
+        background: #ffffff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+      }
+      .header {
+        background: linear-gradient(135deg, #0f172a 0%, #1f2937 55%, #111827 100%);
+        color: #ffffff;
+        padding: 18px 24px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+      }
+      .content {
+        padding: 26px 28px 14px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        color: #111827;
+      }
+      p {
+        margin: 0 0 14px;
+        color: #374151;
+        line-height: 1.6;
+      }
+      .chip {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        margin-bottom: 10px;
+      }
+      .panel {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px;
+        background: #f9fafb;
+        margin: 14px 0 16px;
+      }
+      .row {
+        display: block;
+        margin-bottom: 10px;
+      }
+      .label {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #6b7280;
+        margin-bottom: 4px;
+      }
+      .value {
+        font-size: 15px;
+        color: #111827;
+        font-weight: 600;
+      }
+      .description {
+        font-size: 14px;
+        color: #374151;
+        line-height: 1.5;
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 12px 14px;
+        border: 1px solid #e5e7eb;
+      }
+      .cta {
+        display: inline-block;
+        background: #0f172a;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .footer {
+        padding: 16px 28px 22px;
+        font-size: 12px;
+        color: #9ca3af;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">{{appName}}</div>
+        <div class="content">
+          <div class="chip">ATRIBUICAO DE MANUTENCAO</div>
+          <h1>Voce recebeu uma nova atividade</h1>
+          <p>Ola {{name}}, uma manutencao foi atribuida para voce.</p>
+
+          <div class="panel">
+            <div class="row">
+              <span class="label">Maquina</span>
+              <span class="value">{{machineName}}</span>
+            </div>
+            <div class="row">
+              <span class="label">Prioridade</span>
+              <span class="value">{{priority}}</span>
+            </div>
+            <div class="row">
+              <span class="label">Categoria</span>
+              <span class="value">{{category}}</span>
+            </div>
+            <div class="row">
+              <span class="label">Turno</span>
+              <span class="value">{{shift}}</span>
+            </div>
+          </div>
+
+          <p class="label" style="margin-bottom: 6px;">Pendencia</p>
+          <div class="description">{{problemDescription}}</div>
+
+          <p style="margin-top: 18px;">
+            <a class="cta" href="{{actionUrl}}">Abrir no sistema</a>
+          </p>
+        </div>
+        <div class="footer">{{appName}} · Email automatico</div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -10,6 +10,17 @@ type PasswordResetParams = {
   temporaryPassword: string;
 };
 
+type MaintenanceAssignmentParams = {
+  to: string;
+  name: string;
+  machineName: string;
+  priority: string;
+  category: string;
+  shift: string;
+  problemDescription: string;
+  actionUrl: string;
+};
+
 @Injectable()
 export class MailService {
   private readonly resend: Resend;
@@ -17,6 +28,7 @@ export class MailService {
   private readonly fromEmail: string;
   private readonly fromName: string;
   private readonly appName: string;
+  private readonly appUrl: string;
   private readonly templateDir: string;
   private readonly templateCache = new Map<string, string>();
 
@@ -29,6 +41,7 @@ export class MailService {
       this.config.get<string>('MAIL_FROM_EMAIL') ?? 'no-reply@maintenix.com';
     this.fromName = this.config.get<string>('MAIL_FROM_NAME') ?? 'MAINTENIX';
     this.appName = this.config.get<string>('MAIL_APP_NAME') ?? 'MAINTENIX';
+    this.appUrl = this.config.get<string>('MAIL_APP_URL') ?? 'http://localhost:5173';
     this.templateDir =
       this.config.get<string>('MAIL_TEMPLATE_DIR') ??
       join(process.cwd(), 'src', 'modules', 'mail', 'templates');
@@ -59,19 +72,65 @@ export class MailService {
     return { id: data?.id ?? null };
   }
 
+  async sendMaintenanceAssignmentEmail(params: MaintenanceAssignmentParams) {
+    const {
+      to,
+      name,
+      machineName,
+      priority,
+      category,
+      shift,
+      problemDescription,
+      actionUrl,
+    } = params;
+
+    const subject = `${this.appName} - Nova manutencao atribuida`;
+    const html = await this.renderTemplate('maintenance-assignment.html', {
+      name,
+      machineName,
+      priority,
+      category,
+      shift,
+      problemDescription,
+      actionUrl,
+    });
+
+    const { data, error } = await this.resend.emails.send({
+      from: this.formatFrom(),
+      to,
+      subject,
+      html,
+    });
+
+    // OU: quando estourar o limite diario da Resend, enviar via provedor alternativo.
+    if (error) {
+      this.logger.error(
+        `Falha ao enviar email de manutencao para ${to}: ${error.message}`,
+      );
+      throw new Error('Falha ao enviar email');
+    }
+
+    this.logger.log(
+      `Email de manutencao enviado para ${to}. Id: ${data?.id ?? 'n/a'}`,
+    );
+    return { id: data?.id ?? null };
+  }
+
   private formatFrom() {
     return `${this.fromName} <${this.fromEmail}>`;
   }
 
   private async renderTemplate(
     filename: string,
-    params: { name: string; temporaryPassword: string },
+    params: Record<string, string>,
   ) {
     const source = await this.loadTemplate(filename);
-    return source
-      .replaceAll('{{appName}}', this.appName)
-      .replaceAll('{{name}}', params.name)
-      .replaceAll('{{temporaryPassword}}', params.temporaryPassword);
+    return Object.entries({ appName: this.appName, appUrl: this.appUrl, ...params })
+      .reduce(
+        (content, [key, value]) =>
+          content.replaceAll(`{{${key}}}`, value),
+        source,
+      );
   }
 
   private async loadTemplate(filename: string) {
