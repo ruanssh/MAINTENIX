@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import maintenixLogo from "../../assets/maintenix.svg";
+import maintenixLogoDark from "../../assets/maintenix-dark.svg";
 import { useAuth } from "../../auth/AuthContext";
 import { parseApiError } from "../../api/errors";
 import { loginSchema, type LoginFormValues } from "../../schemas/auth.schema";
@@ -42,7 +43,12 @@ export function LoginPage() {
           <img
             src={maintenixLogo}
             alt="MAINTENIX"
-            className="h-8 w-auto translate-y-[1px]"
+            className="logo-light h-8 w-auto translate-y-[1px]"
+          />
+          <img
+            src={maintenixLogoDark}
+            alt="MAINTENIX"
+            className="logo-dark h-8 w-auto translate-y-[1px]"
           />
         </div>
 
