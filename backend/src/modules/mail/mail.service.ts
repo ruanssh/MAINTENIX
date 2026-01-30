@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 type PasswordResetParams = {
   to: string;
@@ -15,6 +17,8 @@ export class MailService {
   private readonly fromEmail: string;
   private readonly fromName: string;
   private readonly appName: string;
+  private readonly templateDir: string;
+  private readonly templateCache = new Map<string, string>();
 
   constructor(private readonly config: ConfigService) {
     const apiKey = this.config.get<string>('RESEND_API_KEY');
@@ -25,12 +29,15 @@ export class MailService {
       this.config.get<string>('MAIL_FROM_EMAIL') ?? 'no-reply@maintenix.com';
     this.fromName = this.config.get<string>('MAIL_FROM_NAME') ?? 'MAINTENIX';
     this.appName = this.config.get<string>('MAIL_APP_NAME') ?? 'MAINTENIX';
+    this.templateDir =
+      this.config.get<string>('MAIL_TEMPLATE_DIR') ??
+      join(process.cwd(), 'src', 'modules', 'mail', 'templates');
   }
 
   async sendPasswordResetEmail(params: PasswordResetParams) {
     const { to, name, temporaryPassword } = params;
     const subject = `${this.appName} - Nova senha de acesso`;
-    const { html, text } = this.buildPasswordResetTemplate({
+    const html = await this.renderTemplate('password-reset.html', {
       name,
       temporaryPassword,
     });
@@ -40,7 +47,6 @@ export class MailService {
       to,
       subject,
       html,
-      text,
     });
 
     // OU: quando estourar o limite diario da Resend, enviar via provedor alternativo.
@@ -57,55 +63,24 @@ export class MailService {
     return `${this.fromName} <${this.fromEmail}>`;
   }
 
-  private buildPasswordResetTemplate(params: {
-    name: string;
-    temporaryPassword: string;
-  }) {
-    const { name, temporaryPassword } = params;
-    const preview = `${this.appName} - Nova senha`;
+  private async renderTemplate(
+    filename: string,
+    params: { name: string; temporaryPassword: string },
+  ) {
+    const source = await this.loadTemplate(filename);
+    return source
+      .replaceAll('{{appName}}', this.appName)
+      .replaceAll('{{name}}', params.name)
+      .replaceAll('{{temporaryPassword}}', params.temporaryPassword);
+  }
 
-    const text = `Ola ${name},\n\n` +
-      `Sua senha foi redefinida. Use a senha temporaria abaixo para acessar e ` +
-      `troque assim que entrar:\n\n` +
-      `${temporaryPassword}\n\n` +
-      `Se voce nao solicitou isso, entre em contato com o suporte.`;
+  private async loadTemplate(filename: string) {
+    const cached = this.templateCache.get(filename);
+    if (cached) return cached;
 
-    const html = `<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="x-apple-disable-message-reformatting" />
-    <title>${preview}</title>
-    <style>
-      body { margin: 0; padding: 0; background: #f5f7fb; font-family: "Helvetica Neue", Arial, sans-serif; }
-      .container { max-width: 600px; margin: 0 auto; padding: 32px 20px; }
-      .card { background: #ffffff; border-radius: 16px; padding: 28px; box-shadow: 0 8px 24px rgba(18, 24, 40, 0.08); }
-      .brand { font-weight: 700; font-size: 18px; color: #0f172a; letter-spacing: 0.4px; }
-      h1 { margin: 16px 0 12px; font-size: 24px; color: #111827; }
-      p { margin: 0 0 16px; color: #374151; line-height: 1.6; }
-      .password { background: #0f172a; color: #ffffff; font-size: 20px; letter-spacing: 1px; padding: 14px 18px; border-radius: 12px; display: inline-block; }
-      .hint { font-size: 13px; color: #6b7280; margin-top: 18px; }
-      .divider { height: 1px; background: #e5e7eb; margin: 24px 0; }
-      .footer { font-size: 12px; color: #9ca3af; text-align: center; }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="card">
-        <div class="brand">${this.appName}</div>
-        <h1>Nova senha de acesso</h1>
-        <p>Ola ${name}, sua senha foi redefinida com sucesso.</p>
-        <p>Use a senha temporaria abaixo para acessar e altere assim que entrar:</p>
-        <div class="password">${temporaryPassword}</div>
-        <div class="divider"></div>
-        <p class="hint">Se voce nao solicitou esta redefinicao, entre em contato com o suporte.</p>
-      </div>
-      <div class="footer">${this.appName} · Email automatico</div>
-    </div>
-  </body>
-</html>`;
-
-    return { html, text };
+    const filePath = join(this.templateDir, filename);
+    const content = await readFile(filePath, 'utf8');
+    this.templateCache.set(filename, content);
+    return content;
   }
 }

@@ -56,6 +56,8 @@ export class AuthService {
   }
 
   private generateTemporaryPassword() {
-    return randomBytes(9).toString('base64url');
+    const bytes = randomBytes(4);
+    const value = bytes.readUInt32BE(0);
+    return (value % 1_000_000).toString().padStart(6, '0');
   }
 }
