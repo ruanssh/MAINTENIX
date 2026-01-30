@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="x-apple-disable-message-reformatting" />
-    <title>{{appName}} - Nova manutencao</title>
+    <title>{{appName}} - Nova Pendencia</title>
     <style>
       body {
         margin: 0;
@@ -91,13 +91,14 @@
       }
       .cta {
         display: inline-block;
-        background: #0f172a;
+        background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
         color: #ffffff;
         text-decoration: none;
-        padding: 12px 18px;
-        border-radius: 10px;
+        padding: 12px 20px;
+        border-radius: 12px;
         font-weight: 600;
         font-size: 14px;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
       }
       .footer {
         padding: 16px 28px 22px;
@@ -112,13 +113,13 @@
       <div class="card">
         <div class="header">{{appName}}</div>
         <div class="content">
-          <div class="chip">ATRIBUICAO DE MANUTENCAO</div>
-          <h1>Voce recebeu uma nova atividade</h1>
-          <p>Ola {{name}}, uma manutencao foi atribuida para voce.</p>
+          <div class="chip">Atribuição de Pendencia</div>
+          <h1>Você recebeu uma nova atividade</h1>
+          <p>Olá {{name}}, uma Pendencia foi atribuída para você.</p>
 
           <div class="panel">
             <div class="row">
-              <span class="label">Maquina</span>
+              <span class="label">Máquina</span>
               <span class="value">{{machineName}}</span>
             </div>
             <div class="row">
@@ -135,14 +136,14 @@
             </div>
           </div>
 
-          <p class="label" style="margin-bottom: 6px;">Pendencia</p>
+          <p class="label" style="margin-bottom: 6px;">Pendência</p>
           <div class="description">{{problemDescription}}</div>
 
-          <p style="margin-top: 18px;">
+          <p style="margin-top: 20px;">
             <a class="cta" href="{{actionUrl}}">Abrir no sistema</a>
           </p>
         </div>
-        <div class="footer">{{appName}} · Email automatico</div>
+        <div class="footer">{{appName}} · E-mail automático</div>
       </div>
     </div>
   </body>

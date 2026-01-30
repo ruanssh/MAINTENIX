@@ -387,10 +387,10 @@ export class MachinesMaintenanceService {
       await this.mail.sendMaintenanceAssignmentEmail({
         to: responsible.email,
         name: responsible.name,
-        machineName: record.machines?.name ?? 'Maquina',
-        priority: this.formatLabel(record.priority),
-        category: this.formatLabel(record.category),
-        shift: this.formatLabel(record.shift),
+        machineName: record.machines?.name ?? 'Máquina',
+        priority: this.formatPriority(record.priority),
+        category: this.formatCategory(record.category),
+        shift: this.formatShift(record.shift),
         problemDescription: record.problem_description,
         actionUrl,
       });
@@ -408,8 +408,45 @@ export class MachinesMaintenanceService {
     return `${baseUrl}/machines/${machineId.toString()}/maintenance-records/${recordId.toString()}`;
   }
 
-  private formatLabel(value: string | null | undefined) {
+  private formatPriority(value: string | null | undefined) {
+    return this.lookupLabel(value, {
+      LOW: 'Baixa',
+      MEDIUM: 'Média',
+      HIGH: 'Alta',
+    });
+  }
+
+  private formatCategory(value: string | null | undefined) {
+    return this.lookupLabel(value, {
+      ELETRICA: 'Elétrica',
+      MECANICA: 'Mecânica',
+      PNEUMATICA: 'Pneumática',
+      PROCESSO: 'Processo',
+      ELETRONICA: 'Eletrônica',
+      AUTOMACAO: 'Automação',
+      PREDIAL: 'Predial',
+      FERRAMENTARIA: 'Ferramentaria',
+      REFRIGERACAO: 'Refrigeração',
+      SETUP: 'Setup',
+      HIDRAULICA: 'Hidráulica',
+    });
+  }
+
+  private formatShift(value: string | null | undefined) {
+    return this.lookupLabel(value, {
+      PRIMEIRO: 'Primeiro',
+      SEGUNDO: 'Segundo',
+      TERCEIRO: 'Terceiro',
+    });
+  }
+
+  private lookupLabel(
+    value: string | null | undefined,
+    mapping: Record<string, string>,
+  ) {
     if (!value) return '-';
+    const key = value.toUpperCase();
+    if (mapping[key]) return mapping[key];
     const normalized = value.toLowerCase().replace(/_/g, ' ');
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   }
