@@ -6,3 +6,9 @@ export const loginSchema = z.object({
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Informe um e-mail válido."),
+});
+
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

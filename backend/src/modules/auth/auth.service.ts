@@ -1,13 +1,21 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
+import { MailService } from '../mail/mail.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwt: JwtService,
     private readonly users: UsersService,
+    private readonly mail: MailService,
   ) {}
 
   async login(email: string, password: string) {
@@ -25,5 +33,29 @@ export class AuthService {
     });
 
     return { access_token };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const temporaryPassword = this.generateTemporaryPassword();
+    const user = await this.users.resetPasswordByEmail(
+      dto.email,
+      temporaryPassword,
+    );
+
+    try {
+      await this.mail.sendPasswordResetEmail({
+        to: user.email,
+        name: user.name,
+        temporaryPassword,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Falha ao enviar email');
+    }
+
+    return { success: true };
+  }
+
+  private generateTemporaryPassword() {
+    return randomBytes(9).toString('base64url');
   }
 }

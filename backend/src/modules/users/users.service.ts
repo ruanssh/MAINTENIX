@@ -166,4 +166,22 @@ export class UsersService {
 
     return { success: true };
   }
+
+  async resetPasswordByEmail(email: string, newPassword: string) {
+    const user = await this.prisma.users.findUnique({ where: { email } });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!user.active) throw new BadRequestException('Usuário inativo');
+
+    const password_hash = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.users.update({
+      where: { id: user.id },
+      data: {
+        password_hash,
+        updated_at: new Date(),
+      },
+    });
+
+    return user;
+  }
 }
