@@ -1,5 +1,6 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { LoginPage } from "../pages/Login/LoginPage";
+import { ForgotPasswordPage } from "../pages/Login/ForgotPasswordPage";
 import { HomePage } from "../pages/Home/HomePage";
 import { CreateUserPage } from "../pages/Users/CreateUserPage";
 import { UsersListPage } from "../pages/Users/UsersListPage";
@@ -20,6 +21,7 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       <Route
         path="/"
