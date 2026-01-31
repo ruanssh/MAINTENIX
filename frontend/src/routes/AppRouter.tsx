@@ -45,7 +45,7 @@ export function AppRouter() {
       <Route
         path="/maintenance-records"
         element={
-          <ProtectedRoute requireAdmin>
+          <ProtectedRoute>
             <AllMaintenanceRecordsPage />
           </ProtectedRoute>
         }

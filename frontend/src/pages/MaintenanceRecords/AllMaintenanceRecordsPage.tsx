@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { FiFilter } from "react-icons/fi";
+import { FiDownload, FiFilter } from "react-icons/fi";
 
 import { AppLayout } from "../../layouts/AppLayout";
 import { MaintenanceRecordsService } from "../../services/maintenance-records.service";
@@ -108,6 +108,7 @@ export function AllMaintenanceRecordsPage() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [machineSearch, setMachineSearch] = useState("");
   const [isMachineListOpen, setIsMachineListOpen] = useState(false);
   const [userSearch, setUserSearch] = useState("");
@@ -289,6 +290,259 @@ export function AllMaintenanceRecordsPage() {
     setPage(1);
   }
 
+  function escapeHtml(value: string) {
+    return value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  async function handleGeneratePdf() {
+    if (isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+    try {
+      if (filteredRecords.length === 0) {
+        toast.error("Nenhuma pendência para gerar PDF.");
+        return;
+      }
+
+      const recordsWithPhotos = await Promise.all(
+        filteredRecords.map(async (record) => {
+          const photos = await MaintenanceRecordsService.listPhotos(
+            record.machine_id,
+            record.id,
+          );
+          const before = photos.find((photo) => photo.type === "BEFORE");
+          const after = photos.find((photo) => photo.type === "AFTER");
+          return {
+            record,
+            beforeUrl: before?.file_url ?? null,
+            afterUrl: after?.file_url ?? null,
+          };
+        }),
+      );
+
+      const printableHtml = `<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pendências gerais</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Arial", sans-serif;
+        color: #0f172a;
+        background: #ffffff;
+      }
+      .page {
+        padding: 32px 36px 48px;
+      }
+      .header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .subtitle {
+        font-size: 12px;
+        color: #64748b;
+      }
+      .meta {
+        text-align: right;
+        font-size: 12px;
+        color: #475569;
+      }
+      .record {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.08em;
+      }
+      .image {
+        height: 180px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-size: 12px;
+        color: #64748b;
+      }
+      .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .field-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #94a3b8;
+        letter-spacing: 0.08em;
+      }
+      .field-value {
+        margin-top: 4px;
+        font-size: 13px;
+        color: #0f172a;
+        white-space: pre-wrap;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid #e2e8f0;
+        font-size: 11px;
+        font-weight: 700;
+        color: #334155;
+        background: #f8fafc;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .section-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #94a3b8;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      @media print {
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .page { padding: 20px 24px 32px; }
+        .record { break-inside: avoid; page-break-inside: avoid; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="header">
+        <div>
+          <div class="title">Pendências gerais</div>
+          <div class="subtitle">Todas as máquinas</div>
+        </div>
+        <div class="meta">
+          <div>${escapeHtml(new Date().toLocaleString("pt-BR"))}</div>
+          <div>${filteredRecords.length} registros</div>
+        </div>
+      </div>
+      ${recordsWithPhotos
+        .map(({ record, beforeUrl, afterUrl }) => {
+          const priorityLabel =
+            record.priority === "HIGH"
+              ? "Alta"
+              : record.priority === "LOW"
+                ? "Baixa"
+                : "Média";
+          const statusLabel = record.status === "DONE" ? "Resolvida" : "Pendente";
+          return `
+      <div class="record">
+        <div class="column">
+          <div class="label">Pendência</div>
+          <div class="image">
+            ${beforeUrl ? `<img src="${beforeUrl}" alt="Foto do problema" />` : "Sem imagem"}
+          </div>
+          <div>
+            <div class="field-title">Descrição</div>
+            <div class="field-value">${escapeHtml(record.problem_description)}</div>
+          </div>
+          <div class="row">
+            <div>
+              <div class="field-title">Prioridade</div>
+              <div class="field-value">${priorityLabel}</div>
+            </div>
+            <div>
+              <div class="field-title">Status</div>
+              <div class="field-value">${statusLabel}</div>
+            </div>
+          </div>
+          <div>
+            <div class="field-title">Máquina</div>
+            <div class="field-value">${escapeHtml(record.machines?.name ?? "-")}</div>
+          </div>
+          <div>
+            <div class="field-title">Criada em</div>
+            <div class="field-value">${escapeHtml(
+              formatDateTime(record.created_at),
+            )}</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="label">Resolução</div>
+          <div class="image">
+            ${afterUrl ? `<img src="${afterUrl}" alt="Foto da resolução" />` : "Sem imagem"}
+          </div>
+          <div>
+            <div class="field-title">Descrição da solução</div>
+            <div class="field-value">${escapeHtml(
+              record.solution_description ?? "-",
+            )}</div>
+          </div>
+          <div>
+            <div class="field-title">Finalizado em</div>
+            <div class="field-value">${escapeHtml(
+              formatDateTime(record.finished_at),
+            )}</div>
+          </div>
+        </div>
+      </div>`;
+        })
+        .join("")}
+    </div>
+  </body>
+</html>`;
+
+      const popup = window.open("", "_blank");
+      if (!popup) {
+        toast.error("Popup bloqueado. Permita popups para gerar o PDF.");
+        return;
+      }
+      popup.document.open();
+      popup.document.write(printableHtml);
+      popup.document.close();
+      popup.focus();
+      setTimeout(() => popup.print(), 500);
+    } catch (e) {
+      toast.error(parseApiError(e));
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  }
+
   return (
     <AppLayout title="Pendências gerais">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
@@ -304,6 +558,15 @@ export function AllMaintenanceRecordsPage() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
             <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleGeneratePdf}
+                disabled={isGeneratingPdf || loading}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 disabled:opacity-60"
+              >
+                <FiDownload className="text-slate-600" />
+                {isGeneratingPdf ? "Gerando PDF..." : "Gerar PDF"}
+              </button>
               <button
                 type="button"
                 onClick={() => setIsFilterOpen(true)}
@@ -448,6 +711,7 @@ export function AllMaintenanceRecordsPage() {
                   <div className="flex flex-col gap-2">
                     <Link
                       to={`/machines/${record.machine_id}/maintenance-records/${record.id}`}
+                      state={{ from: "/maintenance-records" }}
                       className={`w-full rounded-lg px-4 py-3 text-center text-sm font-semibold ${
                         record.status === "DONE"
                           ? "border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -564,6 +828,7 @@ export function AllMaintenanceRecordsPage() {
                       <td className="px-4 py-4 text-right">
                         <Link
                           to={`/machines/${record.machine_id}/maintenance-records/${record.id}`}
+                          state={{ from: "/maintenance-records" }}
                           className={`inline-flex items-center justify-center rounded-md px-3 py-2 text-xs font-semibold ${
                             record.status === "DONE"
                               ? "border border-slate-200 text-slate-700 hover:bg-slate-50"

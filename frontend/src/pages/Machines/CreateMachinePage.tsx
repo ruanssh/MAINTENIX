@@ -130,7 +130,7 @@ export function CreateMachinePage() {
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <label className="text-sm font-medium text-slate-800">
               URL da foto
             </label>
@@ -139,7 +139,7 @@ export function CreateMachinePage() {
               placeholder="https://cdn.exemplo.com/machines/1.jpg"
               {...register("photo_url")}
             />
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-end gap-2">
             <button

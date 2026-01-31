@@ -87,17 +87,15 @@ export function Sidebar({ variant = "desktop", onClose }: SidebarProps) {
         >
           Minhas pendências
         </NavLink>
-
+        <NavLink
+          to="/maintenance-records"
+          className={({ isActive }) => linkClassName(isActive)}
+          onClick={handleNavigate}
+        >
+          Pendências gerais
+        </NavLink>
         {!loading && isAdmin && (
           <>
-            <NavLink
-              to="/maintenance-records"
-              className={({ isActive }) => linkClassName(isActive)}
-              onClick={handleNavigate}
-            >
-              Pendências gerais
-            </NavLink>
-
             <NavLink
               to="/machines"
               className={({ isActive }) => linkClassName(isActive)}

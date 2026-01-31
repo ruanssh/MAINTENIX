@@ -103,7 +103,9 @@ export function EditMachinePage() {
     <AppLayout title="Editar máquina">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6">
-          <h1 className="text-xl font-semibold tracking-tight">Editar máquina</h1>
+          <h1 className="text-xl font-semibold tracking-tight">
+            Editar máquina
+          </h1>
           <p className="mt-1 text-sm text-slate-600">
             {machine ? machine.name : "Carregando máquina..."}
           </p>
@@ -139,7 +141,9 @@ export function EditMachinePage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-800">Local</label>
+                <label className="text-sm font-medium text-slate-800">
+                  Local
+                </label>
                 <input
                   className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                   placeholder="Setor B"
@@ -171,7 +175,7 @@ export function EditMachinePage() {
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <label className="text-sm font-medium text-slate-800">
                 URL da foto
               </label>
@@ -180,7 +184,7 @@ export function EditMachinePage() {
                 placeholder="https://cdn.exemplo.com/machines/1.jpg"
                 {...register("photo_url")}
               />
-            </div>
+            </div> */}
 
             <div className="flex items-center justify-end gap-2">
               <button
