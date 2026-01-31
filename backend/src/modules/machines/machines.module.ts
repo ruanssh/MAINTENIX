@@ -3,12 +3,13 @@ import { MachinesService } from './machines.service';
 import { MachinesController } from './machines.controller';
 import { MachinesMaintenanceService } from './machines-maintenance.service';
 import { MachinesMaintenanceController } from './machines-maintenance.controller';
+import { MaintenanceRecordsController } from './maintenance-records.controller';
 import { StorageModule } from '../../storage/storage.module';
 import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [StorageModule, MailModule],
   providers: [MachinesService, MachinesMaintenanceService],
-  controllers: [MachinesController, MachinesMaintenanceController],
+  controllers: [MachinesController, MachinesMaintenanceController, MaintenanceRecordsController],
 })
 export class MachinesModule {}

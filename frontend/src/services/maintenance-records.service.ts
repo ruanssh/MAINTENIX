@@ -1,6 +1,7 @@
 import { http } from "../api/http";
 import type {
   MaintenanceRecord,
+  MaintenanceRecordWithMachine,
   CreateMaintenanceRecordRequest,
   FinishMaintenanceRecordRequest,
 } from "../types/maintenance-records";
@@ -10,6 +11,13 @@ export const MaintenanceRecordsService = {
   async list(machineId: string): Promise<MaintenanceRecord[]> {
     const { data } = await http.get<MaintenanceRecord[]>(
       `/machines/${machineId}/maintenance-records`,
+    );
+    return data;
+  },
+
+  async listAll(): Promise<MaintenanceRecordWithMachine[]> {
+    const { data } = await http.get<MaintenanceRecordWithMachine[]>(
+      "/maintenance-records",
     );
     return data;
   },

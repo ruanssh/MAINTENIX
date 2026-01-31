@@ -36,11 +36,14 @@ export class MailService {
     const apiKey = this.config.get<string>('RESEND_API_KEY');
     if (!apiKey) throw new Error('RESEND_API_KEY nao definido');
 
-    this.resend = new Resend(apiKey);    this.fromEmail =
+    this.resend = new Resend(apiKey);
+    this.fromEmail =
       this.config.get<string>('MAIL_FROM_EMAIL') ?? 'no-reply@maintenix.com';
-    this.fromName = this.config.get<string>('MAIL_FROM_NAME') ?? 'Manutenção-Max';
+    this.fromName =
+      this.config.get<string>('MAIL_FROM_NAME') ?? 'Manutenção-Max';
     this.appName = this.config.get<string>('MAIL_APP_NAME') ?? 'Manutenção-Max';
-    this.appUrl = this.config.get<string>('MAIL_APP_URL') ?? 'http://localhost:5173';
+    this.appUrl =
+      this.config.get<string>('MAIL_APP_URL') ?? 'http://localhost:5173';
     this.templateDir =
       this.config.get<string>('MAIL_TEMPLATE_DIR') ??
       join(process.cwd(), 'src', 'modules', 'mail', 'templates');
@@ -67,7 +70,9 @@ export class MailService {
       throw new Error('Falha ao enviar email');
     }
 
-    this.logger.log(`Email de reset enviado para ${to}. Id: ${data?.id ?? 'n/a'}`);
+    this.logger.log(
+      `Email de reset enviado para ${to}. Id: ${data?.id ?? 'n/a'}`,
+    );
     return { id: data?.id ?? null };
   }
 
@@ -83,7 +88,7 @@ export class MailService {
       actionUrl,
     } = params;
 
-    const subject = `${this.appName} - Nova manutencao atribuida`;
+    const subject = `${this.appName} - Nova manutenção atribuída`;
     const html = await this.renderTemplate('maintenance-assignment.html', {
       name,
       machineName,
@@ -104,13 +109,13 @@ export class MailService {
     // OU: quando estourar o limite diario da Resend, enviar via provedor alternativo.
     if (error) {
       this.logger.error(
-        `Falha ao enviar email de manutencao para ${to}: ${error.message}`,
+        `Falha ao enviar email de manutenção para ${to}: ${error.message}`,
       );
       throw new Error('Falha ao enviar email');
     }
 
     this.logger.log(
-      `Email de manutencao enviado para ${to}. Id: ${data?.id ?? 'n/a'}`,
+      `Email de manutenção enviado para ${to}. Id: ${data?.id ?? 'n/a'}`,
     );
     return { id: data?.id ?? null };
   }
@@ -124,12 +129,14 @@ export class MailService {
     params: Record<string, string>,
   ) {
     const source = await this.loadTemplate(filename);
-    return Object.entries({ appName: this.appName, appUrl: this.appUrl, ...params })
-      .reduce(
-        (content, [key, value]) =>
-          content.replaceAll(`{{${key}}}`, value),
-        source,
-      );
+    return Object.entries({
+      appName: this.appName,
+      appUrl: this.appUrl,
+      ...params,
+    }).reduce(
+      (content, [key, value]) => content.replaceAll(`{{${key}}}`, value),
+      source,
+    );
   }
 
   private async loadTemplate(filename: string) {

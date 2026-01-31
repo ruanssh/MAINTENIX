@@ -73,13 +73,50 @@ export class MachinesMaintenanceService {
   async listRecords(machineId: bigint, query: ListMaintenanceRecordsQueryDto) {
     await this.ensureMachine(machineId);
 
+    const responsibleId = query.responsible_id
+      ? this.parseBigInt(query.responsible_id)
+      : undefined;
+
+    const searchQuery = query.query?.trim();
+
     return this.prisma.maintenance_records.findMany({
       where: {
         machine_id: machineId,
         status: query.status,
+        priority: query.priority,
+        category: query.category,
+        shift: query.shift,
+        responsible_id: responsibleId,
+        problem_description: searchQuery
+          ? { contains: searchQuery }
+          : undefined,
       },
       orderBy: { created_at: 'desc' },
       select: this.recordSelect(),
+    });
+  }
+
+  async listAllRecords(query: ListMaintenanceRecordsQueryDto) {
+    const responsibleId = query.responsible_id
+      ? this.parseBigInt(query.responsible_id)
+      : undefined;
+    const machineId = query.machine_id
+      ? this.parseBigInt(query.machine_id)
+      : undefined;
+    const searchQuery = query.query?.trim();
+
+    return this.prisma.maintenance_records.findMany({
+      where: {
+        status: query.status,
+        priority: query.priority,
+        category: query.category,
+        shift: query.shift,
+        responsible_id: responsibleId,
+        machine_id: machineId,
+        problem_description: searchQuery ? { contains: searchQuery } : undefined,
+      },
+      orderBy: { created_at: 'desc' },
+      select: this.recordSelectWithMachine(),
     });
   }
 
@@ -325,6 +362,15 @@ export class MachinesMaintenanceService {
       finished_at: true,
       created_at: true,
       updated_at: true,
+    };
+  }
+
+  private recordSelectWithMachine() {
+    return {
+      ...this.recordSelect(),
+      machines: {
+        select: { id: true, name: true },
+      },
     };
   }
 

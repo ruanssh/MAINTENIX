@@ -35,6 +35,7 @@ export function ForgotPasswordPage() {
       await AuthService.resetPassword(values);
       toast.success("Enviamos uma nova senha para o seu e-mail.");
       reset({ email: "" });
+      navigate("/login");
     } catch (e) {
       toast.error(parseApiError(e));
     }

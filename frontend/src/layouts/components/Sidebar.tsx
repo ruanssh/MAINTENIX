@@ -91,6 +91,14 @@ export function Sidebar({ variant = "desktop", onClose }: SidebarProps) {
         {!loading && isAdmin && (
           <>
             <NavLink
+              to="/maintenance-records"
+              className={({ isActive }) => linkClassName(isActive)}
+              onClick={handleNavigate}
+            >
+              Pendências gerais
+            </NavLink>
+
+            <NavLink
               to="/machines"
               className={({ isActive }) => linkClassName(isActive)}
               onClick={handleNavigate}
