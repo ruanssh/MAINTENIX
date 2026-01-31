@@ -110,9 +110,10 @@ function normalizePayload(
 }
 
 export function FinishMaintenanceRecordPage() {
-  const { id, recordId } = useParams();
+  const { id, machineId: machineIdParam, recordId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const machineId = machineIdParam ?? id;
   const [machine, setMachine] = useState<Machine | null>(null);
   const [record, setRecord] = useState<MaintenanceRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -129,6 +130,15 @@ export function FinishMaintenanceRecordPage() {
     [],
   );
 
+  const listPath = useMemo(() => {
+    if (location.pathname.startsWith("/inbox/")) return "/inbox";
+    if (location.pathname.startsWith("/maintenance-records/")) {
+      return "/maintenance-records";
+    }
+    if (machineId) return `/machines/${machineId}/maintenance-records`;
+    return "/machines";
+  }, [location.pathname, machineId]);
+
   const {
     register,
     handleSubmit,
@@ -141,15 +151,15 @@ export function FinishMaintenanceRecordPage() {
 
   useEffect(() => {
     async function loadData() {
-      if (!id || !recordId) return;
+      if (!machineId || !recordId) return;
       setLoading(true);
       try {
         const [machineData, recordData] = await Promise.all([
-          MachinesService.findById(id),
-          MaintenanceRecordsService.findById(id, recordId),
+          MachinesService.findById(machineId),
+          MaintenanceRecordsService.findById(machineId, recordId),
         ]);
         const photos = await MaintenanceRecordsService.listPhotos(
-          id,
+          machineId,
           recordId,
         );
         setMachine(machineData);
@@ -175,19 +185,14 @@ export function FinishMaintenanceRecordPage() {
         });
       } catch (e) {
         toast.error(parseApiError(e));
-        const fallback = `/machines/${id}/maintenance-records`;
-        const backTo =
-          typeof location.state?.from === "string"
-            ? location.state.from
-            : fallback;
-        navigate(backTo, { replace: true });
+        navigate(listPath, { replace: true });
       } finally {
         setLoading(false);
       }
     }
 
     void loadData();
-  }, [id, recordId, navigate, reset]);
+  }, [machineId, recordId, navigate, reset, listPath]);
 
   useEffect(() => {
     async function loadUsers() {
@@ -210,19 +215,19 @@ export function FinishMaintenanceRecordPage() {
     : "-";
 
   async function onSubmit(values: FinishMaintenanceRecordFormValues) {
-    if (!id || !recordId) return;
+    if (!machineId || !recordId) return;
     if (!afterPhotoFile) {
       toast.error("Envie a foto da resolução.");
       return;
     }
     try {
       await MaintenanceRecordsService.finish(
-        id,
+        machineId,
         recordId,
         normalizePayload(values),
       );
       const photo = await MaintenanceRecordsService.uploadPhoto(
-        id,
+        machineId,
         recordId,
         "AFTER",
         afterPhotoFile,
@@ -233,12 +238,7 @@ export function FinishMaintenanceRecordPage() {
         photo.file_url,
       );
       toast.success("Pendência finalizada.");
-      const fallback = `/machines/${id}/maintenance-records`;
-      const backTo =
-        typeof location.state?.from === "string"
-          ? location.state.from
-          : fallback;
-      navigate(backTo, { replace: true });
+      navigate(listPath, { replace: true });
     } catch (e) {
       toast.error(parseApiError(e));
     }

@@ -43,10 +43,28 @@ export function AppRouter() {
       />
 
       <Route
+        path="/inbox/:machineId/:recordId"
+        element={
+          <ProtectedRoute>
+            <FinishMaintenanceRecordPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/maintenance-records"
         element={
           <ProtectedRoute>
             <AllMaintenanceRecordsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/maintenance-records/:machineId/:recordId"
+        element={
+          <ProtectedRoute>
+            <FinishMaintenanceRecordPage />
           </ProtectedRoute>
         }
       />
