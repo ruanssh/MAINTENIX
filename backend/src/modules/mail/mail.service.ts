@@ -36,11 +36,10 @@ export class MailService {
     const apiKey = this.config.get<string>('RESEND_API_KEY');
     if (!apiKey) throw new Error('RESEND_API_KEY nao definido');
 
-    this.resend = new Resend(apiKey);
-    this.fromEmail =
+    this.resend = new Resend(apiKey);    this.fromEmail =
       this.config.get<string>('MAIL_FROM_EMAIL') ?? 'no-reply@maintenix.com';
-    this.fromName = this.config.get<string>('MAIL_FROM_NAME') ?? 'MAINTENIX';
-    this.appName = this.config.get<string>('MAIL_APP_NAME') ?? 'MAINTENIX';
+    this.fromName = this.config.get<string>('MAIL_FROM_NAME') ?? 'Manutenção-Max';
+    this.appName = this.config.get<string>('MAIL_APP_NAME') ?? 'Manutenção-Max';
     this.appUrl = this.config.get<string>('MAIL_APP_URL') ?? 'http://localhost:5173';
     this.templateDir =
       this.config.get<string>('MAIL_TEMPLATE_DIR') ??

@@ -1,13 +1,7 @@
 <svg viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
-    <!-- Icon -->
-    <path
-        d="M18 6a8 8 0 0 0 0 11l-6 6 3 3 6-6a8 8 0 0 0 11 0l-4-4a3 3 0 0 1-4-4l-4-4z"
-        fill="#16A34A"
-    />
-
     <!-- Text -->
     <text
-        x="50"
+        x="0"
         y="27"
         font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
         font-size="20"
@@ -15,11 +9,11 @@
         fill="#0F172A"
         letter-spacing="0.5"
     >
-        MAINTE
+        MANUTE
     </text>
 
     <text
-        x="135"
+        x="90"
         y="27"
         font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
         font-size="20"
@@ -27,6 +21,6 @@
         fill="#16A34A"
         letter-spacing="0.5"
     >
-        NIX
+        NÇÃO
     </text>
 </svg>
