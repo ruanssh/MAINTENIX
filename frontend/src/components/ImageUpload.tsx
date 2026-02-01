@@ -8,6 +8,7 @@ type Props = {
   previewUrl?: string | null;
   onChange: (file: File | null) => void;
   disabled?: boolean;
+  capture?: "user" | "environment";
 };
 
 export function ImageUpload({
@@ -18,6 +19,7 @@ export function ImageUpload({
   previewUrl,
   onChange,
   disabled,
+  capture = "environment",
 }: Props) {
   const url = previewUrl ?? (value ? URL.createObjectURL(value) : null);
 
@@ -45,7 +47,7 @@ export function ImageUpload({
             </p>
           </div>
           <label
-            className={`inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 ${
+            className={`relative inline-flex cursor-pointer items-center gap-2 overflow-hidden rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 ${
               disabled ? "pointer-events-none opacity-60" : ""
             }`}
           >
@@ -54,7 +56,8 @@ export function ImageUpload({
             <input
               type="file"
               accept="image/*"
-              className="hidden"
+              capture={capture}
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               disabled={disabled}
               onChange={(event) =>
                 onChange(event.target.files?.[0] ?? null)

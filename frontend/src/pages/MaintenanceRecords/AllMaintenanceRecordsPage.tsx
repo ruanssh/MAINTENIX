@@ -717,7 +717,14 @@ export function AllMaintenanceRecordsPage() {
                           : "bg-slate-900 text-white hover:bg-slate-800"
                       }`}
                     >
-                      {record.status === "DONE" ? "Ver resolução" : "Resolver"}
+                      {record.status === "DONE" ? (
+                        "Ver resolução"
+                      ) : (
+                        <>
+                          Visualizar
+                          {/* Resolver */}
+                        </>
+                      )}
                     </Link>
                   </div>
                 </div>
@@ -833,7 +840,14 @@ export function AllMaintenanceRecordsPage() {
                               : "bg-slate-900 text-white hover:bg-slate-800"
                           }`}
                         >
-                          {record.status === "DONE" ? "Visualizar" : "Resolver"}
+                          {record.status === "DONE" ? (
+                            "Visualizar"
+                          ) : (
+                            <>
+                              Visualizar
+                              {/* Resolver */}
+                            </>
+                          )}
                         </Link>
                       </td>
                     </tr>

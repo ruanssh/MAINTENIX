@@ -133,6 +133,7 @@ export function EditMaintenanceRecordPage() {
             ? { id: beforeStored.id, url: beforeStored.file_url }
             : null,
         );
+        setPhotoRequired(!beforeStored);
         setMachine(machineData);
         setRecord(recordData);
         reset({
@@ -194,6 +195,10 @@ export function EditMaintenanceRecordPage() {
 
   async function onSubmit(values: CreateMaintenanceRecordFormValues) {
     if (!id || !recordId) return;
+    if (!beforePhoto && !photoFile) {
+      toast.error("Envie a foto do problema.");
+      return;
+    }
     if (photoRequired && !photoFile) {
       toast.error("Envie a nova foto do problema.");
       return;
