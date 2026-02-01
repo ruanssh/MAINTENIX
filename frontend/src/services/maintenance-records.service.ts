@@ -81,7 +81,7 @@ export const MaintenanceRecordsService = {
       `/machines/${machineId}/maintenance-records/${recordId}/photos`,
       form,
       {
-        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 120_000,
       },
     );
     return data;

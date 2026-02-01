@@ -376,6 +376,7 @@ export function CreateMaintenanceRecordPage() {
             required
             value={photoFile}
             onChange={setPhotoFile}
+            onError={(message) => toast.error(message)}
           />
 
           <div className="flex items-center justify-end gap-2">

@@ -1,3 +1,4 @@
+import type { ChangeEvent } from "react";
 import { FiImage, FiUploadCloud } from "react-icons/fi";
 
 type Props = {
@@ -9,7 +10,54 @@ type Props = {
   onChange: (file: File | null) => void;
   disabled?: boolean;
   capture?: "user" | "environment";
+  maxSizeMB?: number;
+  maxDimension?: number;
+  quality?: number;
+  onError?: (message: string) => void;
 };
+
+async function compressImage(
+  file: File,
+  maxDimension: number,
+  quality: number,
+): Promise<File | null> {
+  const imageUrl = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = reject;
+      element.src = imageUrl;
+    });
+
+    const scale = Math.min(
+      1,
+      maxDimension / Math.max(img.width || 1, img.height || 1),
+    );
+    const targetWidth = Math.max(1, Math.round(img.width * scale));
+    const targetHeight = Math.max(1, Math.round(img.height * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+    const outputType = "image/jpeg";
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, outputType, quality),
+    );
+    if (!blob) return null;
+
+    return new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+      type: blob.type,
+      lastModified: file.lastModified,
+    });
+  } finally {
+    URL.revokeObjectURL(imageUrl);
+  }
+}
 
 export function ImageUpload({
   label,
@@ -20,8 +68,41 @@ export function ImageUpload({
   onChange,
   disabled,
   capture = "environment",
+  maxSizeMB = 5,
+  maxDimension = 1600,
+  quality = 0.85,
+  onError,
 }: Props) {
   const url = previewUrl ?? (value ? URL.createObjectURL(value) : null);
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+    event.target.value = "";
+    if (!file) {
+      onChange(null);
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      onError?.("Arquivo inválido. Selecione uma imagem.");
+      onChange(null);
+      return;
+    }
+
+    let nextFile = file;
+    if (file.size > maxSizeBytes) {
+      const compressed = await compressImage(file, maxDimension, quality);
+      if (compressed) nextFile = compressed;
+    }
+
+    if (nextFile.size > maxSizeBytes) {
+      onError?.("Imagem muito grande. Tente novamente.");
+      onChange(null);
+      return;
+    }
+
+    onChange(nextFile);
+  }
 
   return (
     <div>
@@ -59,9 +140,7 @@ export function ImageUpload({
               capture={capture}
               className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               disabled={disabled}
-              onChange={(event) =>
-                onChange(event.target.files?.[0] ?? null)
-              }
+              onChange={handleFileChange}
             />
           </label>
         </div>

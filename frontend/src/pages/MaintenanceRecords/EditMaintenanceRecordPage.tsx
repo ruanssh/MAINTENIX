@@ -489,6 +489,7 @@ export function EditMaintenanceRecordPage() {
                 required={photoRequired}
                 value={photoFile}
                 onChange={setPhotoFile}
+                onError={(message) => toast.error(message)}
               />
             )}
 

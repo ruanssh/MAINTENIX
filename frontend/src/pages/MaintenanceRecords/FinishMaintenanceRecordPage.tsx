@@ -381,6 +381,7 @@ export function FinishMaintenanceRecordPage() {
                       value={afterPhotoFile}
                       previewUrl={afterPhotoUrl}
                       onChange={setAfterPhotoFile}
+                      onError={(message) => toast.error(message)}
                     />
                   </div>
                   <form
