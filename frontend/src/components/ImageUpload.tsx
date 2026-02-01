@@ -68,8 +68,8 @@ export function ImageUpload({
   onChange,
   disabled,
   capture = "environment",
-  maxSizeMB = 5,
-  maxDimension = 1600,
+  maxSizeMB = 100,
+  maxDimension = 2048,
   quality = 0.85,
   onError,
 }: Props) {
@@ -149,11 +149,7 @@ export function ImageUpload({
       <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
         <div className="flex h-48 w-full items-center justify-center bg-slate-50">
           {url ? (
-            <img
-              src={url}
-              alt={label}
-              className="h-full w-full object-cover"
-            />
+            <img src={url} alt={label} className="h-full w-full object-cover" />
           ) : (
             <div className="text-sm text-slate-500">Sem imagem</div>
           )}

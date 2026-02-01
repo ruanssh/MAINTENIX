@@ -4,7 +4,9 @@ import { getToken, clearToken } from "./token";
 
 export const http = axios.create({
   baseURL: env.API_BASE_URL,
-  timeout: 20_000,
+  timeout: 120_000,
+  maxContentLength: Infinity,
+  maxBodyLength: Infinity,
 });
 
 http.interceptors.request.use((config) => {
