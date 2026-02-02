@@ -7,7 +7,10 @@ import { parseApiError } from "../../api/errors";
 import type { DashboardSummary } from "../../types/dashboard";
 import type { MaintenanceRecordShift } from "../../types/maintenance-records";
 
-const SHIFT_OPTIONS: Array<{ value: MaintenanceRecordShift | "all"; label: string }> = [
+const SHIFT_OPTIONS: Array<{
+  value: MaintenanceRecordShift | "all";
+  label: string;
+}> = [
   { value: "all", label: "Todos os turnos" },
   { value: "PRIMEIRO", label: "Primeiro turno" },
   { value: "SEGUNDO", label: "Segundo turno" },
@@ -84,28 +87,28 @@ export function HomePage() {
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-              <div className="text-xs font-semibold uppercase text-emerald-700">
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+              <div className="text-xs font-semibold uppercase text-red-700">
                 Pendências abertas
               </div>
-              <div className="mt-2 text-3xl font-semibold text-emerald-900">
-                {loading ? "..." : summary?.totals.pending ?? 0}
+              <div className="mt-2 text-3xl font-semibold text-red-900">
+                {loading ? "..." : (summary?.totals.pending ?? 0)}
               </div>
-              <div className="mt-1 text-xs text-emerald-700">
+              <div className="mt-1 text-xs text-red-700">
                 Filtrado por turno
               </div>
             </div>
 
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <div className="text-xs font-semibold uppercase text-amber-700">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <div className="text-xs font-semibold uppercase text-emerald-700">
                 Registros concluídos
               </div>
-              <div className="mt-2 text-3xl font-semibold text-amber-900">
-                {loading ? "..." : summary?.totals.done ?? 0}
+              <div className="mt-2 text-3xl font-semibold text-emerald-900">
+                {loading ? "..." : (summary?.totals.done ?? 0)}
               </div>
-              <div className="mt-1 text-xs text-amber-700">
+              <div className="mt-1 text-xs text-emerald-700">
                 Filtrado por turno
-              </div>
+              </div>  
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
