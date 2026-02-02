@@ -92,7 +92,9 @@ export function CreateMachinePage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-medium text-slate-800">Linha</label>
+              <label className="text-sm font-medium text-slate-800">
+                Linha
+              </label>
               <input
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                 placeholder="Linha 3"
@@ -100,7 +102,9 @@ export function CreateMachinePage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-800">Local</label>
+              <label className="text-sm font-medium text-slate-800">
+                Local
+              </label>
               <input
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                 placeholder="Setor B"
@@ -111,7 +115,9 @@ export function CreateMachinePage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-medium text-slate-800">Modelo</label>
+              <label className="text-sm font-medium text-slate-800">
+                Modelo
+              </label>
               <input
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-300"
                 placeholder="DS-3000"
@@ -152,7 +158,7 @@ export function CreateMachinePage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 disabled:opacity-60"
+              className="btn-primary inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
             >
               {isSubmitting ? "Salvando..." : "Criar máquina"}
             </button>
