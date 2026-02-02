@@ -711,11 +711,7 @@ export function AllMaintenanceRecordsPage() {
                   <div className="flex flex-col gap-2">
                     <Link
                       to={`/maintenance-records/${record.machine_id}/${record.id}`}
-                      className={`w-full rounded-lg px-4 py-3 text-center text-sm font-semibold ${
-                        record.status === "DONE"
-                          ? "border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-700/60 dark:bg-emerald-900/40 dark:text-emerald-100 dark:hover:bg-emerald-900/60"
-                          : "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
-                      }`}
+                      className="w-full rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-700 hover:bg-amber-100"
                     >
                       {record.status === "DONE" ? (
                         "Ver resolução"
@@ -834,11 +830,7 @@ export function AllMaintenanceRecordsPage() {
                       <td className="px-4 py-4 text-right">
                         <Link
                           to={`/maintenance-records/${record.machine_id}/${record.id}`}
-                          className={`inline-flex items-center justify-center rounded-md px-3 py-2 text-xs font-semibold ${
-                            record.status === "DONE"
-                              ? "border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-700/60 dark:bg-emerald-900/40 dark:text-emerald-100 dark:hover:bg-emerald-900/60"
-                              : "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
-                          }`}
+                          className="inline-flex items-center justify-center rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-100"
                         >
                           {record.status === "DONE" ? (
                             "Visualizar"

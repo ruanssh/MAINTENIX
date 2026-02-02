@@ -261,11 +261,11 @@ export function UsersListPage() {
                     </div>
 
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                      <span>Perfil: {ROLE_LABELS.get(user.role) ?? user.role}</span>
-                      <span className="text-slate-300">•</span>
                       <span>
-                        Status: {user.active ? "Ativo" : "Inativo"}
+                        Perfil: {ROLE_LABELS.get(user.role) ?? user.role}
                       </span>
+                      <span className="text-slate-300">•</span>
+                      <span>Status: {user.active ? "Ativo" : "Inativo"}</span>
                     </div>
 
                     <div className="mt-2 text-xs text-slate-500">
@@ -275,7 +275,7 @@ export function UsersListPage() {
 
                   <Link
                     to={`/users/${user.id}/edit`}
-                    className="inline-flex items-center justify-center rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                    className="btn-primary inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
                   >
                     Editar
                   </Link>
@@ -289,7 +289,9 @@ export function UsersListPage() {
             <table className="w-full min-w-full border-separate border-spacing-0 text-left text-sm md:min-w-[900px]">
               <thead>
                 <tr className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="sticky top-0 bg-slate-50 px-4 py-3">Usuário</th>
+                  <th className="sticky top-0 bg-slate-50 px-4 py-3">
+                    Usuário
+                  </th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Perfil</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3">Status</th>
                   <th className="sticky top-0 bg-slate-50 px-4 py-3 hidden md:table-cell">
@@ -422,7 +424,9 @@ export function UsersListPage() {
 
               <button
                 type="button"
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
               >
