@@ -721,7 +721,7 @@ export function MachineRecordsListPage() {
                     {record.status === "DONE" ? (
                       <Link
                         to={`/machines/${id}/maintenance-records/${record.id}`}
-                        className="w-full rounded-lg border border-slate-200 px-4 py-3 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                        className="w-full rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-700/60 dark:bg-emerald-900/40 dark:text-emerald-100 dark:hover:bg-emerald-900/60"
                       >
                         Ver resolução
                       </Link>
@@ -735,7 +735,7 @@ export function MachineRecordsListPage() {
                         </Link>
                         <Link
                           to={`/machines/${id}/maintenance-records/${record.id}`}
-                          className="w-full rounded-lg bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-slate-800"
+                          className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                         >
                           Resolver
                         </Link>
@@ -851,7 +851,7 @@ export function MachineRecordsListPage() {
                         {record.status === "DONE" ? (
                           <Link
                             to={`/machines/${id}/maintenance-records/${record.id}`}
-                            className="inline-flex items-center justify-center rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                            className="inline-flex items-center justify-center rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-700/60 dark:bg-emerald-900/40 dark:text-emerald-100 dark:hover:bg-emerald-900/60"
                           >
                             Visualizar
                           </Link>
@@ -865,7 +865,7 @@ export function MachineRecordsListPage() {
                             </Link>
                             <Link
                               to={`/machines/${id}/maintenance-records/${record.id}`}
-                              className="inline-flex items-center justify-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                              className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                             >
                               Resolver
                             </Link>

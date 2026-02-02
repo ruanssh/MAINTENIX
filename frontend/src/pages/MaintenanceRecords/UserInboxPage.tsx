@@ -681,8 +681,8 @@ export function UserInboxPage() {
                       to={`/inbox/${record.machine_id}/${record.id}`}
                       className={`w-full rounded-lg px-4 py-3 text-center text-sm font-semibold ${
                         record.status === "DONE"
-                          ? "border border-slate-200 text-slate-700 hover:bg-slate-50"
-                          : "bg-slate-900 text-white hover:bg-slate-800"
+                          ? "border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-700/60 dark:bg-emerald-900/40 dark:text-emerald-100 dark:hover:bg-emerald-900/60"
+                          : "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                       }`}
                     >
                       {record.status === "DONE" ? "Ver resolução" : "Resolver"}
@@ -800,8 +800,8 @@ export function UserInboxPage() {
                       to={`/inbox/${record.machine_id}/${record.id}`}
                       className={`inline-flex items-center justify-center rounded-md px-3 py-2 text-xs font-semibold ${
                         record.status === "DONE"
-                          ? "border border-slate-200 text-slate-700 hover:bg-slate-50"
-                              : "bg-slate-900 text-white hover:bg-slate-800"
+                          ? "border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-700/60 dark:bg-emerald-900/40 dark:text-emerald-100 dark:hover:bg-emerald-900/60"
+                              : "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                           }`}
                         >
                           {record.status === "DONE" ? "Visualizar" : "Resolver"}
