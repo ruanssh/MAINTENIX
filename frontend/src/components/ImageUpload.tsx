@@ -68,13 +68,14 @@ export function ImageUpload({
   onChange,
   disabled,
   capture = "environment",
-  maxSizeMB = 100,
-  maxDimension = 2048,
-  quality = 0.85,
+  maxSizeMB = 10,
+  maxDimension = 1920,
+  quality = 0.8,
   onError,
 }: Props) {
   const url = previewUrl ?? (value ? URL.createObjectURL(value) : null);
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
+  const compressThreshold = 2 * 1024 * 1024; // Comprime se maior que 2MB
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
@@ -90,9 +91,14 @@ export function ImageUpload({
     }
 
     let nextFile = file;
-    if (file.size > maxSizeBytes) {
-      const compressed = await compressImage(file, maxDimension, quality);
-      if (compressed) nextFile = compressed;
+    // Sempre comprimir se maior que 2MB (fotos de celular geralmente são 5-20MB)
+    if (file.size > compressThreshold) {
+      try {
+        const compressed = await compressImage(file, maxDimension, quality);
+        if (compressed) nextFile = compressed;
+      } catch (err) {
+        console.error("Erro ao comprimir imagem:", err);
+      }
     }
 
     if (nextFile.size > maxSizeBytes) {

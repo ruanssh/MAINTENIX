@@ -5,7 +5,10 @@ import type {
   CreateMaintenanceRecordRequest,
   FinishMaintenanceRecordRequest,
 } from "../types/maintenance-records";
-import type { MaintenancePhoto, MaintenancePhotoType } from "../types/maintenance-photos";
+import type {
+  MaintenancePhoto,
+  MaintenancePhotoType,
+} from "../types/maintenance-photos";
 
 export const MaintenanceRecordsService = {
   async list(machineId: string): Promise<MaintenanceRecord[]> {
@@ -81,7 +84,10 @@ export const MaintenanceRecordsService = {
       `/machines/${machineId}/maintenance-records/${recordId}/photos`,
       form,
       {
-        timeout: 120_000,
+        timeout: 300_000, // 5 minutos para upload
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
     );
     return data;
